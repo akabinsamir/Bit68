@@ -135,7 +135,7 @@ import Home from './Home';
        
             <View style={{position:'absolute',top:'5.5%',left:'22%',zIndex:1001}}>
 
-            <Text style={{width:180,height:33,fontFamily:'FORMAL',zIndex:500,color:'white',fontSize:18}}>عربة المشتريات</Text>
+            <Text style={{width:180,height:33,fontFamily:'normal',zIndex:500,color:'white',fontSize:18}}>عربة المشتريات</Text>
     
               
           </View>

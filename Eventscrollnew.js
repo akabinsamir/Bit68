@@ -90,29 +90,14 @@ const { width } = Dimensions.get('window');
       }) 
   }
   modal1(){
-    const id=this.state.eventid
-      fetch(`https://cairojazzclub.com/wp-json/cjc/calendar/events/${id}/2866949966694553/event`)
-          .then ((response) => response.json())
-          .then ((responseJson) => {
-      
-            this.setState({
-              modaldescription:responseJson.event_description,
-      
-            })
-           
-
-          })
-          
-          .catch((error) =>{
-            console.log("error");
-          });
+        //console.log('1')
         }
-        onChange(number, type) {
+  onChange(number, type) {
           console.log(number, type)
           this.setState({ attendees: number }) // 1, + or -
         }
       
-       handlePhone = (text) => {
+  handlePhone = (text) => {
           this.setState({ phone: text })
        }
       
@@ -472,10 +457,12 @@ const { width } = Dimensions.get('window');
       <View style={{height:'40%',top:'50%',zIndex:5000}}>
        <Modal
          isVisible={this.state.visibleModal === 5} style={styles.bottomModal}
+         onModalWillShow = {this.modal1}
          onSwipeComplete={() => this.setState({ visibleModal:null })}
           swipeDirection="down"
          >
            {this._renderModalContent()}
+           
          
    
 
