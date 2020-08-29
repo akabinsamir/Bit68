@@ -14,10 +14,10 @@ import { Switch} from 'react-native'*/
 import * as Font from 'expo-font';
 
 //import { Footer } from 'native-base';
-import {createStore}from 'redux';
-import {Provider} from 'react-redux';
+//import {createStore}from 'redux';
+//import {Provider} from 'react-redux';
 
-const initialState ={
+/*const initialState ={
   counter:0
 }
 const reducer = (state = initialState,action) => {
@@ -30,7 +30,7 @@ const reducer = (state = initialState,action) => {
   }
   return state
 }
-const store = createStore(reducer)
+const store = createStore(reducer)*/
 
 export default class Home extends React.Component {
   static navigationOptions =
@@ -41,7 +41,7 @@ export default class Home extends React.Component {
      drawerIcon: <Image source={require('./images/beekoo115.png')} style={{height:0.5,width:560,top:'52%',position:'absolute'}} />,
      labelStyle:{
       fontWeight:'normal',
-      fontFamily:'FORMAL'
+      //fontFamily:'FORMAL'
     }
     
 
@@ -66,11 +66,11 @@ export default class Home extends React.Component {
    }
   }
   async componentDidMount() {
-    await Font.loadAsync({
+   /* await Font.loadAsync({
       'FORMAL': require('./assets/fonts/Tajawal-Bold.ttf'),
      
       
-    });
+    });*/
     
 
     this.setState({ fontLoaded: true });
@@ -158,7 +158,7 @@ export default class Home extends React.Component {
                 zIndex:3,
             }}>{this.state.finalname}</Text>
           </View>*/}
-            <View style={{flex:1,top:'12%',height:'29%'}}>
+            <View style={{flex:1,bottom:'20%',height:'10%'}}>
             <Firstswipe/>
             </View>
             {/*<View style={{top:'18%'}}>
@@ -205,7 +205,7 @@ export default class Home extends React.Component {
           <Categories/>
             </View>
 
-          <View style={{position:'absolute',top:'13%',height:850,width:600,zIndex:500,left:'0.5%'}}><Provider store={store}><Eventscrollnew/></Provider></View>
+          <View style={{position:'absolute',top:'13%',height:850,width:600,zIndex:500,left:'0.5%'}}><Eventscrollnew/></View>
           <View style={{position:'absolute',bottom:'49%',zIndex:2}}>
 
           <Image source={require('./images/graybg.png')} style={{width:420,height:180}}/>

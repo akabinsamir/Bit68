@@ -16,7 +16,7 @@ import {
 import Carousel from 'react-native-anchor-carousel';
 import axios from 'axios';
 import Modal from 'react-native-modal'; // 2.4.0
-import {connect} from 'react-redux'
+//import {connect} from 'react-redux'
 
 const minusIcon = (isMinusDisabled, touchableDisabledColor, touchableColor) => {
   return  <Image source={require('./images/emptybutton.png')} style={styles.minusbutton} />
@@ -459,23 +459,6 @@ const { width } = Dimensions.get('window');
       </TouchableOpacity >
 
 
-      {this.state.addtocartbutton?<TouchableOpacity 
-        onPress={() => {
-          {/*} this.numberCarousel.scrollToIndex(index);*/}
-          //this.state.modaldate=this.state.mydata[index].startDate
-          //this.state.eventid = this.state.mydata[index].id
-          this.setState({ addtocartbutton: false })
-      
-         }} style={styles.item3}>
-      <Image source={require('./images/addtocartbuttonshelf.png')} 
-            style={{width: 40,height: 40,resizeMode:'contain',position:'absolute',zIndex:920}}
-            />
-     </TouchableOpacity>:
-     <TouchableOpacity  style={styles.item4}>
-      <Image source={require('./images/plusmincebutton.png')} 
-            style={{width: 60,height: 60,resizeMode:'contain',position:'absolute',zIndex:920}}
-            />
-     </TouchableOpacity>}
 
 
       </View>
@@ -518,7 +501,7 @@ const { width } = Dimensions.get('window');
   }
 }
 
-function mapStateToProps(state)
+/*function mapStateToProps(state)
 {
   return {counter: state.counter}
 }
@@ -528,8 +511,8 @@ function mapDispatchToProps(dispatch){
     increaseCounter : () => dispatch({type:'INCREASE_COUNTER'}),
     decreaseCounter : () => dispatch({type:'DECREASE_COUNTER'}),
   }
-}
-export default connect(mapStateToProps,mapDispatchToProps)(Eventscrollnew)
+}*/
+export default /*connect(mapStateToProps,mapDispatchToProps)(*/Eventscrollnew//)
 
 const styles = StyleSheet.create({
   carousel: {

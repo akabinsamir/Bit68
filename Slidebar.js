@@ -20,7 +20,7 @@ export default Slidebar = props =>{
                 inactiveTintColor='#FCB034'
                 activeTintColor='white'
              
-                labelStyle={{fontSize:20,fontWeight:'normal',fontFamily:'FORMAL'}}
+                labelStyle={{fontSize:20,fontWeight:'normal',fontFamily:'normal'}}
                 
 
                 

@@ -2,12 +2,14 @@ import React from 'react';
 import { StyleSheet, Text, View,Image, ImageBackground ,Button,TouchableOpacity,CheckBox,SafeAreaView,ScrollView} from 'react-native';
 import Firstswipe from './Firstswipe';
 import * as Font from 'expo-font';
+//import {createStackNavigator} from '@react-navigation/stack';
+import Home from './Home';
 
 
 
 
 
-export default class Cart extends React.Component {
+ class Cart extends React.Component {
   static navigationOptions =
   {
      
@@ -42,11 +44,11 @@ export default class Cart extends React.Component {
    }
   }
   async componentDidMount() {
-    await Font.loadAsync({
+    /*await Font.loadAsync({
       'FORMAL': require('./assets/fonts/Tajawal-Regular.ttf'),
      
       
-    });
+    });*/
     
 
     this.setState({ fontLoaded: true });
@@ -118,132 +120,34 @@ export default class Cart extends React.Component {
                     </TouchableOpacity> 
 
             </View>
-            {/*<View style={styles.headerbutton1}>
-                    <TouchableOpacity style={{alignItems:'flex-end',margin:16,zIndex:500}}>
-                        <Image source={require('./images/searchbar.png')} style={{width:240,height:45}}/>
-                    </TouchableOpacity> 
-
-        </View>*/}
-            {/*<View style={styles.headerbuttoncat}>
-                                
-                        <Dropdown
-                        animationDuration={100}
-                        
-                    //textColor='green'
-                    //itemColor='green'
-                    //disabledItemColor='green'
-                    labelFontSize={16}
-                    dropdownPosition={-4}
-                    textColor='black'
-                    baseColor='white'
-                    itemCount={10}
-                    label=' 1منتجات الالبان والبيض'
-                    data={values}
-                />
-
-    </View>*/}
+     
 
             <ScrollView style={{width:'100%',height:'80%',zIndex:1001}}>
             <View style={styles.container}>
-              
-            {/*<Image source={require('./images/cairojazz.png')} style={styles.logo} />*/}
+
          
 
             </View>
-           {/* <View>
-            <Image source={require('./images/profilecircle.png')} style={styles.profile} />
-            <Image source={{uri:picture}} style={styles.profile2} />
-            <Text style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                borderColor: '#fff',
-                height: 40,
-                width:210,
-                bottom:680,
-                left:71,
-                fontSize: 10,
-                width:400,
-                color: '#541e1b',
-                fontWeight: 'bold',
-                zIndex:3,
-            }}>{this.state.finalname}</Text>
-          </View>*/}
+       
             <View style={{flex:1,top:'12%',height:'29%',opacity:0,}}>
             <Firstswipe/>
             </View>
-            {/*<View style={{top:'18%'}}>
-            <Image source={require('./images/backgroundCUT.png')} style={styles.minibacktwo} />
-        </View>*/}
+       
             <View style={{position:'absolute',top:'5.5%',left:'22%',zIndex:1001}}>
 
             <Text style={{width:180,height:33,fontFamily:'FORMAL',zIndex:500,color:'white',fontSize:18}}>عربة المشتريات</Text>
-            {/*Text to show the text according to switch condition*/}
-            
-       
-          {/*<View>{this.state.switchValue? <View style={{position:'relative',bottom:225,right:160,zIndex:500}}><Footer2/></View>:<View style={{position:'relative',bottom:225,right:160,zIndex:500}}><Footer1/></View>}</View>*/}
-
-
-           
-            {/*Switch with value set in constructor*/}
-           
-
-            {/*<Switch 
-              style={{zIndex:501,position:'absolute',marginTop:55,left:30 ,opacity:0.01,transform: [{ scaleX: 4 }, { scaleY: 3 }]}}
-              onValueChange = {this.toggleSwitch}
-              value = {this.state.switchValue}
-              trackColor={{true: '#f8de7e', false: '#8e1600'}}
-              />
-              
-              
-            <Switch 
-              style={{zIndex:501,position:'absolute',marginTop:55,left:150 ,opacity:0.01,transform: [{ scaleX: 4 }, { scaleY: 3 }]}}
-              onValueChange = {this.toggleSwitch}
-              value = {this.state.switchValue}
-              trackColor={{true: '#f8de7e', false: '#8e1600'}}
-              />
-                 
-            <Switch 
-              style={{zIndex:501, position:'absolute',marginTop:55,right:450 ,opacity:0.01,transform: [{ scaleX: 4 }, { scaleY: 3 }]}}
-              onValueChange = {this.toggleSwitch}
-              value = {this.state.switchValue}
-              trackColor={{true: '#f8de7e', false: '#8e1600'}}
-            />*/}
+    
               
           </View>
      
 
-          {/*<View style={{position:'absolute',bottom:'26%',height:850,width:600,zIndex:500,left:'0.5%'}}><Eventscrollnew/></View>*/}
           <View style={{position:'absolute',bottom:'0%',zIndex:2,}}>
 
           <Image source={require('./images/cartbg.png')} style={{width:500,height:680,resizeMode:'stretch'}}/>
 
           </View>
           {/* item 1*/}
-          <View style={{position:'absolute',bottom:'44%',height:300,width:500,zIndex:1000,left:'5%'}}>
-
-          <Image source={require('./images/rice.png')} style={{width:110,height:110}}/>
-            </View>
-            <View style={{position:'absolute',bottom:'46%',height:300,width:500,zIndex:1000,left:'47%'}}>
-            <Image source={require('./images/ricename.png')} style={{width:195,height:30}}/>
-            </View>
-            <View style={{position:'absolute',bottom:'40%',height:300,width:500,zIndex:1000,left:'75%'}}>
-            <Image source={require('./images/ricesize.png')} style={{width:80,height:30}}/>
-            </View>
-            <TouchableOpacity style={{position:'absolute',bottom:'34%',height:300,width:100,zIndex:1000,left:'85%'}}>
-            <Image source={require('./images/plusicon.png')} style={{width:40,height:40}}/>
-            </TouchableOpacity>
-            <View style={{position:'absolute',bottom:'34.5%',height:300,width:500,zIndex:1000,left:'80%'}}>
-            <Text style={{width:180,height:33,fontFamily:'FORMAL',zIndex:500,fontSize:23}}>2</Text>
-            </View>
-            <TouchableOpacity style={{position:'absolute',bottom:'34%',height:300,width:50,zIndex:1000,left:'68%'}}>
-            <Image source={require('./images/minceicon.png')} style={{width:43,height:43}}/>
-            </TouchableOpacity>
-            <View style={{position:'absolute',bottom:'33%',height:300,width:500,zIndex:1000,left:'40%'}}>
-            <Image source={require('./images/pricesample.png')} style={{width:100,height:30}}/>
-            </View>
-            <View style={{position:'absolute',bottom:'27%',height:300,width:500,zIndex:1000,left:'5%'}}>
-            <Image source={require('./images/seperator_line.png')} style={{width:370,height:2}}/>
-            </View>
+        {/*<AppStackNavigator/>*/}
             {/*end of item */}
             {/* item 1*/}
             <View style={{position:'absolute',bottom:'24%',height:300,width:500,zIndex:1000,left:'5%'}}>
@@ -260,7 +164,7 @@ export default class Cart extends React.Component {
   <Image source={require('./images/plusicon.png')} style={{width:40,height:40}}/>
   </TouchableOpacity>
   <View style={{position:'absolute',bottom:'14.5%',height:300,width:500,zIndex:1000,left:'80%'}}>
-  <Text style={{width:180,height:33,fontFamily:'FORMAL',zIndex:500,fontSize:23}}>2</Text>
+  <Text style={{width:180,height:33,fontFamily:'normal',zIndex:500,fontSize:23}}>2</Text>
   </View>
   <TouchableOpacity style={{position:'absolute',bottom:'14%',height:300,width:50,zIndex:1000,left:'68%'}}>
   <Image source={require('./images/minceicon.png')} style={{width:43,height:43}}/>
@@ -287,7 +191,7 @@ export default class Cart extends React.Component {
   <Image source={require('./images/plusicon.png')} style={{width:40,height:40}}/>
   </TouchableOpacity>
   <View style={{position:'absolute',top:'66.5%',height:300,width:500,zIndex:1000,left:'80%'}}>
-  <Text style={{width:180,height:33,fontFamily:'FORMAL',zIndex:500,fontSize:23}}>2</Text>
+  <Text style={{width:180,height:33,fontFamily:'normal',zIndex:500,fontSize:23}}>2</Text>
   </View>
   <TouchableOpacity style={{position:'absolute',top:'67%',height:300,width:50,zIndex:1000,left:'68%'}}>
   <Image source={require('./images/minceicon.png')} style={{width:43,height:43}}/>
@@ -314,6 +218,13 @@ export default class Cart extends React.Component {
         );
     }
 }
+export default Cart
+
+/*const AppStackNavigator = createStackNavigator({
+    Home:Home,
+    Products:Products,
+})*/
+
 const styles = StyleSheet.create({
     container: {
         flex:1,

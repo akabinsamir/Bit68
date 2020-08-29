@@ -157,7 +157,7 @@ export default class Login extends React.Component {
 
           <TextInput
             style={{
-              fontFamily: "FORMAL",
+              fontFamily: "normal",
               height: 40,
               textAlign: "center",
               width: "82.5%",
@@ -204,7 +204,7 @@ export default class Login extends React.Component {
               color: "white",
               opacity: 0.8,
               left: "35%",
-              fontFamily: "FORMAL",
+              fontFamily: "normal",
             }}
           >
             Forgot Password?
@@ -234,7 +234,7 @@ export default class Login extends React.Component {
             color: "white",
             opacity: 0.8,
             left: "33%",
-            fontFamily: "FORMAL",
+            fontFamily: "normal",
           }}
         >
           or Sign up with
@@ -286,7 +286,7 @@ export default class Login extends React.Component {
             color: "white",
             opacity: 0.8,
             left: "14%",
-            fontFamily: "FORMAL",
+            fontFamily: "normal",
           }}
         >
           Don't have an account?
@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
     width: "82.5%",
     bottom: "57.5%",
     textAlign: "center",
-    fontFamily: "FORMAL",
+    fontFamily: "normal",
     color: "white",
     fontSize: 28,
     zIndex: 200,
@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     width: "82.5%",
     bottom: "57.5%",
-    fontFamily: "FORMAL",
+    fontFamily: "normal",
     textAlign: "center",
     color: "white",
     zIndex: 200,
