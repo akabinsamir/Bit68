@@ -48,9 +48,10 @@ const { width } = Dimensions.get('window');
        
         visibleModal: null,
 
-        modaldate:null,
+        productname:null,
         eventid:null,
         modaldescription:null,
+        productimage:null,
 
 
 
@@ -72,7 +73,7 @@ const { width } = Dimensions.get('window');
 
   this.setState({fontLoaded:true})
  
-      fetch('https://cairojazzclub.com/wp-json/cjc/calendar/events_2/web/all')
+      fetch('http://192.168.43.201:3000/api/products')
       .then ((response) => response.json())
       .then ((responseJson) => {
   
@@ -91,6 +92,9 @@ const { width } = Dimensions.get('window');
   }
   modal1(){
         //console.log('1')
+        
+        
+        
         }
   onChange(number, type) {
           console.log(number, type)
@@ -138,10 +142,8 @@ const { width } = Dimensions.get('window');
 <Image source={require('./images/detailstitlebg.png')} 
             style={{position:'absolute',bottom:'87%',width:'100%',height:37}}
             />
-            <Image source={require('./images/detailstitle.png')} 
-            style={{position:'absolute',bottom:'87.5%',width:'57%',height:37}}
-            />
-             <Image source={require('./images/detailsimage.png')} 
+             <Text  style={{position:'absolute',bottom:'86%',width:'100%',height:37,left:'40%',fontFamily:'normal'}}>{this.state.productname}</Text>
+             <Image source={{uri: this.state.productimage}} 
             style={{position:'absolute',bottom:'47%',width:'46%',height:'38%',right:'52%'}}
             />
     {/*----------------------------------------------------------------- */}
@@ -329,8 +331,8 @@ const { width } = Dimensions.get('window');
             />
             <TouchableOpacity 
              onPress={() => {
-              {/*} this.numberCarousel.scrollToIndex(index);*/}
-              //this.state.modaldate=this.state.mydata[index].startDate
+              //this.numberCarousel.scrollToIndex(index);
+              //this.state.productname=this.state.mydata[index].productname
               //this.state.eventid = this.state.mydata[index].id
               this.setState({ details: true })
           
@@ -386,19 +388,7 @@ const { width } = Dimensions.get('window');
       
       
   renderItem = ({ item, index }) => {
-    const { img, startDate, content } = item;
-    if(startDate.substring(0,2)==="01"){this.state.month1 = " JAN"};
-    if(startDate.substring(0,2)==="02"){this.state.month1 = " FEB"};
-    if(startDate.substring(0,2)==="03"){this.state.month1 = " MAR"};
-    if(startDate.substring(0,2)==="04"){this.state.month1 = " APR"};
-    if(startDate.substring(0,2)==="05"){this.state.month1 = " MAY"};
-    if(startDate.substring(0,2)==="06"){this.state.month1 = " JUN"};
-    if(startDate.substring(0,2)==="07"){this.state.month1 = " JUL"};
-    if(startDate.substring(0,2)==="08"){this.state.month1 = " AUG"};
-    if(startDate.substring(0,2)==="09"){this.state.month1 = " SEP"};
-    if(startDate.substring(0,2)==="010"){this.state.month1 = " OCT"};
-    if(startDate.substring(0,2)==="011"){this.state.month1 = " NOV"};
-    if(startDate.substring(0,2)==="012"){this.state.month1 = " DEC"};
+   
 
 
     return (
@@ -410,9 +400,10 @@ const { width } = Dimensions.get('window');
         //activeOpacity={1}
         style={styles.item}
         onPress={() => {
-         {/*} this.numberCarousel.scrollToIndex(index);*/}
-         //this.state.modaldate=this.state.mydata[index].startDate
-         //this.state.eventid = this.state.mydata[index].id
+          //this.numberCarousel.scrollToIndex(index)
+         this.state.productname=this.state.mydata[index].productname
+         this.state.eventid = this.state.mydata[index].id
+         this.state.productimage = this.state.mydata[index].productimage
          this.setState({ visibleModal: 5 })
      
         }}
