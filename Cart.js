@@ -1,14 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View,Image, ImageBackground ,Button,TouchableOpacity,CheckBox,SafeAreaView,ScrollView} from 'react-native';
+import { StyleSheet, Text, View,Image, ImageBackground ,Button,TouchableOpacity,CheckBox,SafeAreaView,ScrollView,Dimensions} from 'react-native';
 import Firstswipe from './Firstswipe';
-import * as Font from 'expo-font';
+//import * as Font from 'expo-font';
 //import {createStackNavigator} from '@react-navigation/stack';
-import Home from './Home';
+//import Home from './Home';
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 
 
-
+var { width } = Dimensions.get("window")
  class Cart extends React.Component {
   static navigationOptions =
   {
@@ -40,6 +41,10 @@ import Home from './Home';
       finalname:null,
       visibleModal: null,
       details:true,
+      dataCart:[],
+      totalprice:0,
+      
+      data:"",
      
    }
   }
@@ -50,6 +55,21 @@ import Home from './Home';
       
     });*/
     
+    AsyncStorage.getItem('cart').then((cart)=>{
+      //console.log(this.state.totalprice)
+      if (cart !== null) {
+        // We have data!!
+        const cartfood = JSON.parse(cart)
+        this.setState({dataCart:cartfood})
+      
+        //this.state.totalprice+=cartfood.quantity*cartfood.price 
+        
+        console.log(this.state.totalprice)
+      }
+    })
+    .catch((err)=>{
+      alert(err)
+    })
 
     this.setState({ fontLoaded: true });
   }
@@ -61,7 +81,26 @@ import Home from './Home';
           //which will result in re-render the text
       }
     
-
+      onChangeQual(i,type)
+      {
+        const dataCar = this.state.dataCart
+        let cantd = dataCar[i].quantity;
+    
+        if (type) {
+         cantd = cantd + 1
+         dataCar[i].quantity = cantd
+         this.setState({dataCart:dataCar})
+        }
+        else if (type==false&&cantd>=2){
+         cantd = cantd - 1
+         dataCar[i].quantity = cantd
+         this.setState({dataCart:dataCar})
+        }
+        else if (type==false&&cantd==1){
+         dataCar.splice(i,1)
+         this.setState({dataCart:dataCar})
+        } 
+      }
   
     
     render(){
@@ -98,6 +137,7 @@ import Home from './Home';
                       //this.state.modaldate=this.state.mydata[index].startDate
                       //this.state.eventid = this.state.mydata[index].id
                       this.props.navigation.navigate('Reciept')
+                      AsyncStorage.clear();
                   
                      }} style={{zIndex:1002}}>
                         <Image source={require('./images/confirmbutton.png')} style={{width:400,height:60}}/>
@@ -122,7 +162,7 @@ import Home from './Home';
             </View>
      
 
-            <ScrollView style={{width:'100%',height:'80%',zIndex:1001}}>
+         
             <View style={styles.container}>
 
          
@@ -146,68 +186,59 @@ import Home from './Home';
           <Image source={require('./images/cartbg.png')} style={{width:500,height:680,resizeMode:'stretch'}}/>
 
           </View>
-          {/* item 1*/}
+     
         {/*<AppStackNavigator/>*/}
+        {/*CART ITEMS---------------------------------------------------------------------------------------- */}
+        <View style={{alignItems: 'center', justifyContent: 'center',height:550,bottom:'25%'}}>
+         <View style={{flex:1}}>
+
+           <ScrollView style={{zIndex:10,height:800}}>
+
+             {
+               this.state.dataCart.map((item,i)=>{
+                 return(
+                   <View style={{width:width-20,margin:10,backgroundColor:'transparent', flexDirection:'row', borderBottomWidth:2, borderColor:"#cccccc", paddingBottom:10}}>
+                     <Image  style={{width:width/3,height:width/3,resizeMode:'contain'}} source={{uri: item.productimage}} />
+                     <View style={{flex:1, backgroundColor:'trangraysparent', padding:10, justifyContent:"space-between"}}>
+                       <View>
+                         <Text style={{fontWeight:"bold", fontSize:20}}>{item.productname}</Text>
+                         <Text>1 kilo</Text>
+                       </View>
+                       <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                         <Text style={{fontWeight:'bold',color:"#33c37d",fontSize:20}}>${item.price*item.quantity}</Text>
+                         <View style={{flexDirection:'row', alignItems:'center'}}>
+                           <TouchableOpacity onPress={()=>this.onChangeQual(i,false)}>
+                           <Image source={require('./images/minceicon.png')} 
+            style={{width:35,height:35}}
+            />
+                           </TouchableOpacity>
+                           <Text style={{paddingHorizontal:8, fontWeight:'bold', fontSize:18}}>{item.quantity}</Text>
+                           <TouchableOpacity onPress={()=>this.onChangeQual(i,true)}>
+                           <Image source={require('./images/plusicon.png')} 
+            style={{width:35,height:35}}
+            />
+                           </TouchableOpacity>
+                         </View>
+                       </View>
+                     </View>
+                   </View>
+                 )
+               })
+             }
+
+            
+           </ScrollView>
+
+         </View>
+
+      </View>
             {/*end of item */}
-            {/* item 1*/}
-            <View style={{position:'absolute',bottom:'24%',height:300,width:500,zIndex:1000,left:'5%'}}>
-
-<Image source={require('./images/milk.png')} style={{width:70,height:110}}/>
-  </View>
-  <View style={{position:'absolute',bottom:'26%',height:300,width:500,zIndex:1000,left:'47%'}}>
-  <Image source={require('./images/ricename.png')} style={{width:195,height:30}}/>
-  </View>
-  <View style={{position:'absolute',bottom:'20%',height:300,width:500,zIndex:1000,left:'75%'}}>
-  <Image source={require('./images/ricesize.png')} style={{width:80,height:30}}/>
-  </View>
-  <TouchableOpacity style={{position:'absolute',bottom:'14%',height:300,width:100,zIndex:1000,left:'85%'}}>
-  <Image source={require('./images/plusicon.png')} style={{width:40,height:40}}/>
-  </TouchableOpacity>
-  <View style={{position:'absolute',bottom:'14.5%',height:300,width:500,zIndex:1000,left:'80%'}}>
-  <Text style={{width:180,height:33,fontFamily:'normal',zIndex:500,fontSize:23}}>2</Text>
-  </View>
-  <TouchableOpacity style={{position:'absolute',bottom:'14%',height:300,width:50,zIndex:1000,left:'68%'}}>
-  <Image source={require('./images/minceicon.png')} style={{width:43,height:43}}/>
-  </TouchableOpacity>
-  <View style={{position:'absolute',bottom:'13%',height:300,width:500,zIndex:1000,left:'40%'}}>
-  <Image source={require('./images/pricesample.png')} style={{width:100,height:30}}/>
-  </View>
-  <View style={{position:'absolute',bottom:'7%',height:300,width:500,zIndex:1000,left:'5%'}}>
-  <Image source={require('./images/seperator_line.png')} style={{width:370,height:2}}/>
-  </View>
-  {/*end of item */}
-    {/* item 1*/}
-    <View style={{position:'absolute',bottom:'4%',height:300,width:500,zIndex:1000,left:'5%'}}>
-
-<Image source={require('./images/rice.png')} style={{width:110,height:110}}/>
-  </View>
-  <View style={{position:'absolute',bottom:'6%',height:300,width:500,zIndex:1000,left:'47%'}}>
-  <Image source={require('./images/ricename.png')} style={{width:195,height:30}}/>
-  </View>
-  <View style={{position:'absolute',bottom:'0%',height:300,width:500,zIndex:1000,left:'75%'}}>
-  <Image source={require('./images/ricesize.png')} style={{width:80,height:30}}/>
-  </View>
-  <TouchableOpacity style={{position:'absolute',top:'67%',height:300,width:100,zIndex:1000,left:'85%'}}>
-  <Image source={require('./images/plusicon.png')} style={{width:40,height:40}}/>
-  </TouchableOpacity>
-  <View style={{position:'absolute',top:'66.5%',height:300,width:500,zIndex:1000,left:'80%'}}>
-  <Text style={{width:180,height:33,fontFamily:'normal',zIndex:500,fontSize:23}}>2</Text>
-  </View>
-  <TouchableOpacity style={{position:'absolute',top:'67%',height:300,width:50,zIndex:1000,left:'68%'}}>
-  <Image source={require('./images/minceicon.png')} style={{width:43,height:43}}/>
-  </TouchableOpacity>
-  <View style={{position:'absolute',top:'68%',height:300,width:500,zIndex:1000,left:'40%'}}>
-  <Image source={require('./images/pricesample.png')} style={{width:100,height:30}}/>
-  </View>
-  <View style={{position:'absolute',top:'74%',height:300,width:500,zIndex:1000,left:'5%'}}>
-  <Image source={require('./images/seperator_line.png')} style={{width:370,height:2}}/>
-  </View>
-  {/*end of item */}
-
+       
+           
 
 
         
-          </ScrollView>
+    
        
             
             </ImageBackground>

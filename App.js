@@ -21,11 +21,11 @@ import Moscrollone from './Moscrollone';
 import Footer1 from './Footer1';
 import Readmore from './Readmore';
 import Storage from './Storage';
-import Login from './Login';
+import Login from './Login';*/
 import Products from './Products';
-import Splash from './Splash';*/
+import Categories from './Categories';
 import Cart from './Cart';
-//import Reciept from './Reciept';
+import Reciept from './Reciept';
 //import Modaltest1 from './Modaltest1';
 import {createAppContainer} from 'react-navigation';
 import {createDrawerNavigator} from 'react-navigation-drawer';
@@ -36,7 +36,7 @@ import Slidebar from "./Slidebar";
 //import {Provider} from 'react-redux';
 
 
-
+console.disableYellowBox = true; // DISABLE ALL WARNINGS
 
 
 const DrawerNavigator = createDrawerNavigator(
@@ -70,10 +70,12 @@ const DrawerNavigator = createDrawerNavigator(
           
         
         },*/
+       
         Home:Home,
-        //Products:Products,
+        Products:Products,
         Cart:Cart,
         //Reciept:Reciept,
+        
         
 
 

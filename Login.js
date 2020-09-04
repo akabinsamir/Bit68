@@ -9,18 +9,14 @@ import {
   Button,
   TouchableOpacity,
   TextInput,
-  CheckBox,
-  ActivityIndicator,
   Dimensions,
-  Linking,
-  KeyboardAvoidingView,
 } from "react-native";
 import axios from "axios";
-import Home from "./Home";
+//import Home from "./Home";
 
 import * as Font from "expo-font";
 
-import Intro from "./Intro";
+//import Intro from "./Intro";
 
 
 export default class Login extends React.Component {
@@ -90,7 +86,7 @@ export default class Login extends React.Component {
       alert("please check the missing fields");
     } else {
       axios
-        .post("http://192.168.43.201:3000/api/user/login", {
+        .post("http://192.168.0.103:3000/api/user/login", {
           username: this.state.username,
           password: this.state.password,
         })

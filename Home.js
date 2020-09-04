@@ -6,6 +6,7 @@ import { StyleSheet, Text, View,Image, ImageBackground ,Button,TouchableOpacity,
 import Eventscrollnew from './Eventscrollnew';
 import Firstswipe from './Firstswipe';
 import Categories from './Categories';
+
 /*import Footer1 from './Footer1';
 import Footer2 from './Footer2';
 
@@ -62,19 +63,24 @@ export default class Home extends React.Component {
       switchValue:false,
       finalname:null,
       counter:0,
+      categoryID:null,
+      mydata:null,
      
    }
   }
-  async componentDidMount() {
-   /* await Font.loadAsync({
-      'FORMAL': require('./assets/fonts/Tajawal-Bold.ttf'),
-     
-      
-    });*/
-    
+componentDidMount() {
+     fetch('http://192.168.0.100:3000/api/products')
+    .then((response) => response.json())
+    .then((responseJson) => {
+      this.setState({
+        mydata: responseJson,
+      });
+   
+    });
 
-    this.setState({ fontLoaded: true });
+   
   }
+ 
       
       toggleSwitch = (value) => {
           //onValueChange of the switch this function will be called
@@ -100,6 +106,7 @@ export default class Home extends React.Component {
          
           
             <ImageBackground source={require('./images/mrwhite.jpg')} style={{width:'100%', height:'100%',flex:1}}>
+               
               <View style={styles.header}>
               <Image source={require('./images/headertamween.png')} style={styles.headerphoto} />
               </View>
@@ -116,7 +123,10 @@ export default class Home extends React.Component {
 
             </View>
             <View style={styles.cart}>
-                    <TouchableOpacity style={{alignItems:'flex-end',margin:16,top:'30%',zIndex:500}}>
+                    <TouchableOpacity onPress={() => {
+            //on clicking we are going to open the URL using Linking
+            this.props.navigation.navigate("Cart");
+          }} style={{alignItems:'flex-end',margin:16,top:'30%',zIndex:500}}>
                         <Image source={require('./images/carttamween.png')} style={{width:40,height:40}}/>
                     </TouchableOpacity> 
 
@@ -140,72 +150,23 @@ export default class Home extends React.Component {
          
 
             </View>
-           {/* <View>
-            <Image source={require('./images/profilecircle.png')} style={styles.profile} />
-            <Image source={{uri:picture}} style={styles.profile2} />
-            <Text style={{0
-                flexDirection: 'row',
-                alignItems: 'center',
-                borderColor: '#fff',
-                height: 40,
-                width:210,
-                bottom:680,
-                left:71,
-                fontSize: 10,
-                width:400,
-                color: '#541e1b',
-                fontWeight: 'bold',
-                zIndex:3,
-            }}>{this.state.finalname}</Text>
-          </View>*/}
+          
             <View style={{flex:1,bottom:'20%',height:'10%'}}>
             <Firstswipe/>
             </View>
-            {/*<View style={{top:'18%'}}>
-            <Image source={require('./images/backgroundCUT.png')} style={styles.minibacktwo} />
-        </View>*/}
+         
             <View style={{position:'absolute',top:'29%',left:'73%',zIndex:100}}>
 
             <Image source={require('./images/arabicTASNEFAAT.png')} style={{width:100,height:33}}/>
-            {/*Text to show the text according to switch condition*/}
-            
-       
-          {/*<View>{this.state.switchValue? <View style={{position:'relative',bottom:225,right:160,zIndex:500}}><Footer2/></View>:<View style={{position:'relative',bottom:225,right:160,zIndex:500}}><Footer1/></View>}</View>*/}
-
-
-           
-            {/*Switch with value set in constructor*/}
-           
-
-            {/*<Switch 
-              style={{zIndex:501,position:'absolute',marginTop:55,left:30 ,opacity:0.01,transform: [{ scaleX: 4 }, { scaleY: 3 }]}}
-              onValueChange = {this.toggleSwitch}
-              value = {this.state.switchValue}
-              trackColor={{true: '#f8de7e', false: '#8e1600'}}
-              />
-              
-              
-            <Switch 
-              style={{zIndex:501,position:'absolute',marginTop:55,left:150 ,opacity:0.01,transform: [{ scaleX: 4 }, { scaleY: 3 }]}}
-              onValueChange = {this.toggleSwitch}
-              value = {this.state.switchValue}
-              trackColor={{true: '#f8de7e', false: '#8e1600'}}
-              />
-                 
-            <Switch 
-              style={{zIndex:501, position:'absolute',marginTop:55,right:450 ,opacity:0.01,transform: [{ scaleX: 4 }, { scaleY: 3 }]}}
-              onValueChange = {this.toggleSwitch}
-              value = {this.state.switchValue}
-              trackColor={{true: '#f8de7e', false: '#8e1600'}}
-            />*/}
+        
               
           </View>
           <View style={{position:'absolute',bottom:'37%',height:300,width:500,zIndex:1000,left:'0.5%'}}>
 
-          <Categories/>
+          <Categories navigation={this.props.navigation}/>
             </View>
 
-          <View style={{position:'absolute',top:'13%',height:850,width:600,zIndex:500,left:'0.5%'}}><Eventscrollnew/></View>
+          {this.state.mydata? (<View style={{position:'absolute',top:'7.5%',height:850,width:600,zIndex:500,left:'0.5%'}}><Eventscrollnew products={this.state.mydata} navigation={this.props.navigation}/></View>):(<View></View>)}
           <View style={{position:'absolute',bottom:'49%',zIndex:2}}>
 
           <Image source={require('./images/graybg.png')} style={{width:420,height:180}}/>
