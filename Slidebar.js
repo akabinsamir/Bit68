@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import {View,Text,StyleSheet,ScrollView,ImageBackground,Image} from "react-native";
+import {View,Text,StyleSheet,ScrollView,ImageBackground,Image,Dimensions} from "react-native";
 import {DrawerNavigatorItems} from "react-navigation-drawer";
 
 
 
-
+let screenHeight = Dimensions.get("window").height;
 
 
 export default Slidebar = props =>{
@@ -13,14 +13,14 @@ export default Slidebar = props =>{
     return(
      
     
-        <ImageBackground source={require('./images/beekoo115.png')} style={{width:undefined,height:'100%'}}>
-            <View style={{flex:1,top:'5%',right:'10%'}}>
+        <ImageBackground source={require('./images/slidebar.png')} style={{width:undefined,height:screenHeight,}}>
+            <View style={{flex:1}}>
              
-                <DrawerNavigatorItems {...props}  style={{backgroundColor: '#000000'}}
-                inactiveTintColor='#FCB034'
-                activeTintColor='white'
+                <DrawerNavigatorItems {...props} 
+                inactiveTintColor='white'
+                activeTintColor='gray'
              
-                labelStyle={{fontSize:20,fontWeight:'normal',fontFamily:'normal'}}
+                labelStyle={{fontSize:20,fontWeight:'bold',fontFamily:'normal'}}
                 
 
                 

@@ -55,11 +55,26 @@ class Eventscrollnew extends Component {
     };
     
   }
+ /* componentDidUpdate(prevProps) {
+    if (prevProps.products !== this.props.products){
+      
+      this.setState({
+        mydata:this.props.products
+    })
+    }
+  
+  }*/
   componentDidUpdate(prevProps) {
-  
-  
-  }
+    if (
+      prevProps.products !==
+      this.props.products
+    ) {
+      this.setState({
+        mydata:this.props.products
+    })
 
+    }
+  }
   componentDidMount() {
     
   
@@ -114,15 +129,11 @@ class Eventscrollnew extends Component {
         <Text
           style={{
             position: "absolute",
-            bottom: "86%",
-            width: "100%",
-            height: 37,
-            left: "40%",
-            fontFamily: "normal",
+            bottom: "88%",
+            fontSize:15,
+            //fontFamily: "normal",
           }}
-        >
-          {this.state.productname}
-        </Text>
+        >{this.state.productname}</Text>
         <Image
           source={{ uri: this.state.productimage }}
           style={{
@@ -830,6 +841,7 @@ class Eventscrollnew extends Component {
           style={styles.item}
           onPress={() => {
             //this.numberCarousel.scrollToIndex(index)
+            
             this.state.productname = this.state.mydata[index].productName;
             this.state.eventid = this.state.mydata[index].id;
             this.state.productimage = this.state.mydata[index].productimage;
@@ -851,9 +863,11 @@ class Eventscrollnew extends Component {
               zIndex: 9,
             }}
           />
-          <Text style={{ fontSize: 17, zIndex: 10, bottom: "1%", left: "7%" }}>
+          <View style={{position:'absolute',width:'70%',bottom:'80%',left:'10%'}}>
+          <Text style={{ fontSize: 15, zIndex: 10,}}>
             {productName}
           </Text>
+          </View>
 
           <Image
             source={{ uri: productimage }}

@@ -86,7 +86,7 @@ export default class Login extends React.Component {
       alert("please check the missing fields");
     } else {
       axios
-        .post("http://192.168.0.103:3000/api/user/login", {
+        .post("http://192.168.0.100:3000/api/user/login", {
           username: this.state.username,
           password: this.state.password,
         })

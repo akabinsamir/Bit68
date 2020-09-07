@@ -1,37 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View,Image, ImageBackground ,Button,TouchableOpacity,CheckBox,SafeAreaView,ScrollView} from 'react-native';
-//import Eventscrolltwonew from './Eventscrolltwonew';
-
-//import Bannerscroll from './Bannerscroll';
+import { StyleSheet, Text, View,Image, ImageBackground ,TouchableOpacity,SafeAreaView,ScrollView,Dimensions} from 'react-native';
 import Eventscrollnew from './Eventscrollnew';
 import Firstswipe from './Firstswipe';
 import Categories from './Categories';
+import AsyncStorage from '@react-native-community/async-storage';
 
-/*import Footer1 from './Footer1';
-import Footer2 from './Footer2';
-
-import {FontAwesome5} from '@expo/vector-icons'
-import { Switch} from 'react-native'*/
-import * as Font from 'expo-font';
-
-//import { Footer } from 'native-base';
-//import {createStore}from 'redux';
-//import {Provider} from 'react-redux';
-
-/*const initialState ={
-  counter:0
-}
-const reducer = (state = initialState,action) => {
-  switch(action.type)
-  {
-    case 'INCREASE_COUNTER':
-      return {counter:state.counter+1}
-    case 'DECREASE_COUNTER':
-      return {counter:state.counter-1}
-  }
-  return state
-}
-const store = createStore(reducer)*/
+let screenWidth = Dimensions.get("window").width;
+let screenHeight = Dimensions.get("window").height;
 
 export default class Home extends React.Component {
   static navigationOptions =
@@ -46,7 +21,7 @@ export default class Home extends React.Component {
     }
     
 
-   
+    
 
 
   };
@@ -65,11 +40,13 @@ export default class Home extends React.Component {
       counter:0,
       categoryID:null,
       mydata:null,
+      dataCart:[],
      
    }
   }
+  
 componentDidMount() {
-     fetch('http://192.168.0.100:3000/api/products')
+     fetch('http://192.168.43.201:3000/api/products')
     .then((response) => response.json())
     .then((responseJson) => {
       this.setState({
@@ -77,6 +54,8 @@ componentDidMount() {
       });
    
     });
+    AsyncStorage.clear();
+
 
    
   }
@@ -124,8 +103,23 @@ componentDidMount() {
             </View>
             <View style={styles.cart}>
                     <TouchableOpacity onPress={() => {
-            //on clicking we are going to open the URL using Linking
-            this.props.navigation.navigate("Cart");
+              AsyncStorage.getItem('cart').then((cart)=>{
+                //console.log(this.state.totalprice)
+                
+                  // We have data!!
+                  const cartfood = JSON.parse(cart)
+                  this.props.navigation.navigate("Cart",{
+                    cart:cartfood
+                  });
+             
+              })
+              .catch((err)=>{
+                alert(err)
+              })
+
+
+
+           
           }} style={{alignItems:'flex-end',margin:16,top:'30%',zIndex:500}}>
                         <Image source={require('./images/carttamween.png')} style={{width:40,height:40}}/>
                     </TouchableOpacity> 
@@ -155,13 +149,11 @@ componentDidMount() {
             <Firstswipe/>
             </View>
          
-            <View style={{position:'absolute',top:'29%',left:'73%',zIndex:100}}>
+            <View style={{position:'absolute',top:'29.5%',left:'73%',zIndex:100}}>
 
-            <Image source={require('./images/arabicTASNEFAAT.png')} style={{width:100,height:33}}/>
-        
-              
-          </View>
-          <View style={{position:'absolute',bottom:'37%',height:300,width:500,zIndex:1000,left:'0.5%'}}>
+            <Image source={require('./images/arabicTASNEFAAT.png')} style={{width:screenWidth/4,height:screenHeight/25}}/>
+         </View>
+          <View style={{position:'absolute',bottom:'40%',height:screenHeight/3,width:screenWidth,zIndex:1000,left:'0.5%'}}>
 
           <Categories navigation={this.props.navigation}/>
             </View>
@@ -169,7 +161,7 @@ componentDidMount() {
           {this.state.mydata? (<View style={{position:'absolute',top:'7.5%',height:850,width:600,zIndex:500,left:'0.5%'}}><Eventscrollnew products={this.state.mydata} navigation={this.props.navigation}/></View>):(<View></View>)}
           <View style={{position:'absolute',bottom:'49%',zIndex:2}}>
 
-          <Image source={require('./images/graybg.png')} style={{width:420,height:180}}/>
+          <Image source={require('./images/graybg.png')} style={{width:screenWidth,height:screenHeight/4.5}}/>
 
           </View>
 
@@ -297,8 +289,8 @@ const styles = StyleSheet.create({
   footer: {
     flex:1,
     zIndex:500,
-    width:'100%',
-    height:'9%',
+    width:screenWidth,
+    height:screenHeight/10.5,
     bottom:'0%',
  
     position:'absolute',

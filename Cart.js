@@ -1,20 +1,19 @@
 import React from 'react';
 import { StyleSheet, Text, View,Image, ImageBackground ,Button,TouchableOpacity,CheckBox,SafeAreaView,ScrollView,Dimensions} from 'react-native';
 import Firstswipe from './Firstswipe';
-//import * as Font from 'expo-font';
-//import {createStackNavigator} from '@react-navigation/stack';
-//import Home from './Home';
+import { NavigationEvents } from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
 
 
-
+let screenWidth = Dimensions.get("window").width;
+let screenHeight = Dimensions.get("window").height;
 
 var { width } = Dimensions.get("window")
  class Cart extends React.Component {
   static navigationOptions =
   {
      
-     
+     title:'طلباتي',
     
      drawerIcon: <Image source={require('./images/beekoo115.png')} style={{height:0.5,width:560,top:'52%',position:'absolute'}} />,
      labelStyle:{
@@ -43,19 +42,59 @@ var { width } = Dimensions.get("window")
       details:true,
       dataCart:[],
       totalprice:0,
+      totalitems:0,
       
       data:"",
      
    }
   }
-  async componentDidMount() {
-    /*await Font.loadAsync({
-      'FORMAL': require('./assets/fonts/Tajawal-Regular.ttf'),
-     
+ async componentDidUpdate(prevProps, prevState) {
+
+
+  
+
+
+    if (
+      prevProps.navigation.state.params.cart !==
+      this.props.navigation.state.params.cart
+    ) {
+      this.setState({
+        totalitems:0,
+        totalprice:0
+      })
+     await AsyncStorage.getItem('cart').then((cart)=>{
+        //console.log(this.state.totalprice)
+        if (cart !== null) {
+          // We have data!!
+          const cartfood = JSON.parse(cart)
+          this.setState({dataCart:cartfood})
+
+          for(let i = 0; i < this.state.dataCart.length; i++){ 
       
-    });*/
+            this.setState({totalprice:this.state.totalprice + (this.state.dataCart[i].quantity*this.state.dataCart[i].price)})
+            this.setState({totalitems:this.state.totalitems + this.state.dataCart[i].quantity})
+          }
+
+        }
+      })
+      .catch((err)=>{
+        alert(err)
+      })
+  
     
-    AsyncStorage.getItem('cart').then((cart)=>{
+
+    }
+    
+  
+  }
+
+  async componentDidMount() {
+    this.setState({
+      totalitems:0,
+      totalprice:0
+    })
+    
+  await  AsyncStorage.getItem('cart').then((cart)=>{
       //console.log(this.state.totalprice)
       if (cart !== null) {
         // We have data!!
@@ -64,14 +103,19 @@ var { width } = Dimensions.get("window")
       
         //this.state.totalprice+=cartfood.quantity*cartfood.price 
         
-        console.log(this.state.totalprice)
+ 
       }
     })
     .catch((err)=>{
       alert(err)
     })
-
-    this.setState({ fontLoaded: true });
+    for(let i = 0; i < this.state.dataCart.length; i++){ 
+      
+      this.setState({totalprice:this.state.totalprice + (this.state.dataCart[i].quantity*this.state.dataCart[i].price)})
+      this.setState({totalitems:this.state.totalitems + this.state.dataCart[i].quantity})
+    }
+    console.log(this.state.totalprice)
+    
   }
       
       toggleSwitch = (value) => {
@@ -81,7 +125,7 @@ var { width } = Dimensions.get("window")
           //which will result in re-render the text
       }
     
-      onChangeQual(i,type)
+     async onChangeQual(i,type)
       {
         const dataCar = this.state.dataCart
         let cantd = dataCar[i].quantity;
@@ -89,17 +133,117 @@ var { width } = Dimensions.get("window")
         if (type) {
          cantd = cantd + 1
          dataCar[i].quantity = cantd
-         this.setState({dataCart:dataCar})
+         
+         try {
+          await AsyncStorage.setItem("cart",JSON.stringify(this.state.dataCart))
+          this.setState({ dataCart: JSON.parse(await AsyncStorage.getItem("cart")) })
+          
+          
+  
+        } catch (error) {
+          console.log(error);
+        }
+        await  AsyncStorage.getItem('cart').then((cart)=>{
+          //console.log(this.state.totalprice)
+          if (cart !== null) {
+            // We have data!!
+            
+            const cartfood = JSON.parse(cart)
+            this.setState({dataCart:dataCar,totalprice:0,totalitems:0})
+            for(let i = 0; i < this.state.dataCart.length; i++){ 
+          
+              this.setState({totalprice:this.state.totalprice + (this.state.dataCart[i].quantity*this.state.dataCart[i].price)})
+            this.setState({totalitems:this.state.totalitems + this.state.dataCart[i].quantity})
+            }
+          
+            //this.state.totalprice+=cartfood.quantity*cartfood.price 
+            
+     
+          }
+        })
+        .catch((err)=>{
+          alert(err)
+        })
+       
+        
+         console.log(this.state.totalprice)
+        
         }
         else if (type==false&&cantd>=2){
          cantd = cantd - 1
          dataCar[i].quantity = cantd
          this.setState({dataCart:dataCar})
+         try {
+          await AsyncStorage.setItem("cart",JSON.stringify(this.state.dataCart))
+          this.setState({ dataCart: JSON.parse(await AsyncStorage.getItem("cart")) })
+          
+  
+        } catch (error) {
+          console.log(error);
+        }
+        await  AsyncStorage.getItem('cart').then((cart)=>{
+          //console.log(this.state.totalprice)
+          if (cart !== null) {
+            // We have data!!
+            
+            const cartfood = JSON.parse(cart)
+            this.setState({dataCart:dataCar,totalprice:0,totalitems:0})
+            for(let i = 0; i < this.state.dataCart.length; i++){ 
+          
+              this.setState({totalprice:this.state.totalprice + (this.state.dataCart[i].quantity*this.state.dataCart[i].price)})
+            this.setState({totalitems:this.state.totalitems + this.state.dataCart[i].quantity})
+            }
+          
+            //this.state.totalprice+=cartfood.quantity*cartfood.price 
+            
+     
+          }
+        })
+        .catch((err)=>{
+          alert(err)
+        })
+        console.log(this.state.totalprice)
         }
         else if (type==false&&cantd==1){
          dataCar.splice(i,1)
          this.setState({dataCart:dataCar})
+         
+         
+         try {
+          await AsyncStorage.setItem("cart",JSON.stringify(this.state.dataCart))
+          this.setState({ dataCart: JSON.parse(await AsyncStorage.getItem("cart")) })
+          
+  
+        } catch (error) {
+          console.log(error);
+        }
+        await  AsyncStorage.getItem('cart').then((cart)=>{
+          //console.log(this.state.totalprice)
+          if (cart !== null) {
+            // We have data!!
+            const cartfood = JSON.parse(cart)
+            for(let i = 0; i < cartfood.length; i++){ 
+          
+              this.setState({totalprice:this.state.totalprice + (cartfood[i].quantity*cartfood[i].price)})
+              this.setState({totalitems:this.state.totalitems - 1})
+            }
+          
+            //this.state.totalprice+=cartfood.quantity*cartfood.price 
+            
+     
+          }
+        })
+        .catch((err)=>{
+          alert(err)
+        })
+    
+        console.log(this.state.totalprice)
+        
+      
+         
         } 
+
+        
       }
   
     
@@ -118,7 +262,7 @@ var { width } = Dimensions.get("window")
          
           
             <ImageBackground source={require('./images/mrwhite.jpg')} style={{width:'100%', height:'100%',flex:1}}>
-            
+           
               <View style={styles.header}>
               <Image source={require('./images/headertamween.png')} style={styles.headerphoto} />
               </View>
@@ -157,6 +301,7 @@ var { width } = Dimensions.get("window")
             <View style={styles.cart}>
                     <TouchableOpacity style={{alignItems:'flex-end',margin:16,top:'35%',zIndex:1002}}>
                         <Image source={require('./images/cartnumber.png')} style={{width:32,height:30}}/>
+                    <Text style={{bottom:'50%',right:'40%'}}>{this.state.totalitems}</Text>
                     </TouchableOpacity> 
 
             </View>
@@ -189,7 +334,7 @@ var { width } = Dimensions.get("window")
      
         {/*<AppStackNavigator/>*/}
         {/*CART ITEMS---------------------------------------------------------------------------------------- */}
-        <View style={{alignItems: 'center', justifyContent: 'center',height:550,bottom:'25%'}}>
+        <View style={{alignItems: 'center', justifyContent: 'center',height:550,bottom:'20%'}}>
          <View style={{flex:1}}>
 
            <ScrollView style={{zIndex:10,height:800}}>
@@ -291,12 +436,11 @@ const styles = StyleSheet.create({
   footer: {
     flex:1,
     zIndex:500,
-    width:'100%',
-    height:'9.2%',
+    width:screenWidth,
+    height:screenHeight/10.5,
     bottom:'0%',
  
     position:'absolute',
-
 },
 footerprice: {
     flex:1,

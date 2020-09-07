@@ -10,6 +10,7 @@ import {
 
 import Swiper from "react-native-swiper";
 let screenWidth = Dimensions.get("window").width;
+let screenHeight = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   wrapper: {},
   slide1: {
@@ -62,7 +63,7 @@ export default class Swiperinto extends React.Component {
     };
   }
   componentDidMount() {
-    fetch("https://cairojazzclub.com/wp-json/cjc/home/slider")
+    /*fetch("https://cairojazzclub.com/wp-json/cjc/home/slider")
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
@@ -72,7 +73,8 @@ export default class Swiperinto extends React.Component {
       })
       .catch((error) => {
         console.log(error);
-      });
+      });*/
+   
   }
   render() {
     let screenWidth = Dimensions.get("window").width;
@@ -88,44 +90,49 @@ export default class Swiperinto extends React.Component {
       >
         <View
           style={{
-            top: "4.8%",
-            marginBottom: "15%",
-            paddingBottom: "60%",
-            paddingTop: "4%",
-
             width: screenWidth,
+            height:screenHeight/10*9.5,
             alignItems: "center",
             justifyContent: "center",
           }}
         >
           <Image
-            source={{ uri: this.state.dataSource[0] }}
+            source={require('./images/94116650-special-offer-banner-in-trendy-style-supermarket-sale-proposition-up-to-50-off-message-retail-market.jpg')}
             style={{
               width: screenWidth,
-              height: 300,
               resizeMode: "contain",
-              top: "61%",
             }}
           />
         </View>
         <View
           style={{
-            top: "4.8%",
-            marginBottom: "15%",
-            paddingBottom: "60%",
-            paddingTop: "4%",
             width: screenWidth,
+            height:screenHeight/10*9.5,
             alignItems: "center",
             justifyContent: "center",
           }}
         >
           <Image
-            source={{ uri: this.state.dataSource[1] }}
+            source={require('./images/OOHMID2.jpg')}
             style={{
               width: screenWidth,
-              height: 300,
               resizeMode: "contain",
-              top: "61%",
+            }}
+          />
+        </View>
+        <View
+          style={{
+            width: screenWidth,
+            height:screenHeight/10*9.5,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Image
+            source={require('./images/94116645-mega-sale-banner-template-in-trendy-style-retail-marketing-information-new-advertising-campaign-holi.jpg')}
+            style={{
+              width: screenWidth,
+              resizeMode: "contain",
             }}
           />
         </View>

@@ -155,7 +155,7 @@ export default class Categories extends React.Component {
  componentDidMount() {
   //const { navigation } = this.props;
  
-    fetch("http://192.168.0.100:3000/api/categories/")
+    fetch("http://192.168.43.201:3000/api/categories/")
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
@@ -170,29 +170,6 @@ export default class Categories extends React.Component {
   }
   
   navi = (text) => {
-    //const that = this;
-    //console.log(text);
-    //this.props.navigation.navigate("Eventscrollnew",{id:text});
-    /*axios.patch('http://192.168.43.201:3000/api/links/5f504046e0fd21270cc63d17', {
-      value:"ragy",
-
-    })
-    .then(function (response) {
-    
-      
-   
-
-      console.log(response)
-     
-     
-      
-
-     
-    })
-    .catch(function (error) {
-
-      alert('please check your internet connection!');
-    });*/
   if (text != null)
   {
     this.props.navigation.navigate("Products",{
