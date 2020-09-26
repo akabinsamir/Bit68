@@ -5,7 +5,7 @@ import { StyleSheet, } from 'react-native';
 //import HorizontalScrollView from './components/HorizontalScrollView';
 import { Pages } from 'react-native-pages';
 
-//import Moreinfo from './Moreinfo';
+import Signup from './Signup';
 import Home from './Home';
 /*import Intro from './Intro';
 import Screen from './Screen';
@@ -20,30 +20,47 @@ import Monthswiper from './Monthswiper';
 import Moscrollone from './Moscrollone';
 import Footer1 from './Footer1';
 import Readmore from './Readmore';
-import Storage from './Storage';
-import Login from './Login';*/
+import Storage from './Storage';*/
+import Login from './Login';
 import Products from './Products';
 import Categories from './Categories';
 import Cart from './Cart';
 import Reciept from './Reciept';
-//import Modaltest1 from './Modaltest1';
+import Splash from './Splash';
 import {createAppContainer} from 'react-navigation';
 import {createDrawerNavigator} from 'react-navigation-drawer';
 import Slidebar from "./Slidebar";
+//import Map from './Map';
+
 
 //import {feather} from '@expo/vector-icons';
 //import {createStore}from 'redux';
 //import {Provider} from 'react-redux';
 
 
-console.disableYellowBox = true; // DISABLE ALL WARNINGS
+// console.disableYellowBox = true; // DISABLE ALL WARNINGS
 
 
 const DrawerNavigator = createDrawerNavigator(
   
       {
-     
-       /* Login: {
+
+      
+ 
+    /*  Splash: {
+          screen:Splash,
+          navigationOptions: {
+            
+            drawerLockMode:'locked-closed',
+            drawerLabel: () => null
+            
+            
+            
+          },
+          
+        
+        },*/
+ Login: {
           screen:Login,
           navigationOptions: {
             
@@ -57,8 +74,8 @@ const DrawerNavigator = createDrawerNavigator(
         
         },
         
-        Moreinfo: {
-          screen:Moreinfo,
+     Signup: {
+          screen:Signup,
           navigationOptions: {
             
             drawerLockMode:'locked-closed',
@@ -69,12 +86,35 @@ const DrawerNavigator = createDrawerNavigator(
           },
           
         
-        },*/
-       
+        },
+        Map: {
+          screen:Map,
+          navigationOptions: {
+            
+            drawerLockMode:'locked-closed',
+            drawerLabel: () => null
+            
+            
+            
+          },
+          
+        
+        },
         Home:Home,
-        Products:Products,
+       Products:Products,
         Cart:Cart,
-        //Reciept:Reciept,
+        Reciept: {
+          screen:Reciept,
+          navigationOptions: {
+            
+            drawerLockMode:'locked-closed',
+            drawerLabel: () => null
+            
+            
+            
+          },
+        
+        }
         
         
 

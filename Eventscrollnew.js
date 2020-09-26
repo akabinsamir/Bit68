@@ -6,21 +6,20 @@ import {
   View,
   Dimensions,
   Image,
-  Button,
-  TextInput,
-  CheckBox,
-  KeyboardAvoidingView,
+ 
 } from "react-native";
-//import { withNavigationFocus } from "react-navigation";
+import Draggable from 'react-native-draggable';
 import Carousel from "react-native-anchor-carousel";
 import axios from "axios";
 import Modal from "react-native-modal"; // 2.4.0
 import AsyncStorage from "@react-native-community/async-storage";
-//import { NavigationEvents } from 'react-navigation';
+import * as Font from "expo-font";
 
-//import {connect} from 'react-redux'
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get("window").width;
+let screenWidth = Dimensions.get("window").width;
+let screenHeight = Dimensions.get("window").height;
+
 
 class Eventscrollnew extends Component {
   constructor(props) {
@@ -37,7 +36,8 @@ class Eventscrollnew extends Component {
       productname: null,
       eventid: null,
       modaldescription: null,
-      productimage: "http://192.168.43.201:3000/uploads/me.jpeg",
+      productimage: "http://www.tamweenymarket.com/uploads/me.jpeg",
+      sizeAndPrice:null,
       allowimage: false,
 
       attendees: 1,
@@ -46,12 +46,17 @@ class Eventscrollnew extends Component {
       details: true,
       addtocartbutton: [],
 
-      reservationMessage: null,
 
       categoryID: null,
-      link:'',
-      // mainlink:'http://192.168.43.201:3000/api/products',
       isRefreshing: false,
+      myRelateddata:null,
+
+      firstoption:false,
+      message:null,
+      font:'normal',
+
+      counter:[],
+      sizenumbers:[0,0,0]
     };
     
   }
@@ -75,35 +80,73 @@ class Eventscrollnew extends Component {
 
     }
   }
-  componentDidMount() {
-    
+ async componentDidMount() {
+    await Font.loadAsync({
+      'main':require('./assets/fonts/Tajawal-Regular.ttf')
+    })
+
+    this.setState({font:'main'})
   
-    //console.log(this.props.products);
+   
     this.setState({
         mydata:this.props.products
     })
     
-
   
     
   }
  
+  async onChangeQual(i,type,data,sized,priced)
+  {
     
+    const dataCar = this.state.sizenumbers
+    let cantd = dataCar[i]
+ 
+
+    const obj = {
+      productname: data.productName,
+      productimage: data.productimage,
+      productsize:sized,
+      price: priced,
+      quantity: 1,
+    };
+
+    if (type) {
+      
+
+      cantd = cantd + 1
+      dataCar[i] = cantd
+      this.setState({sizenumbers:dataCar})
+     
+     
+     
+      this.state.counter.push(obj)
+  
+      //console.log(this.state.counter)
+    }
+    else if (!type){
+      cantd = cantd - 1
+      dataCar[i] = cantd
+      this.setState({sizenumbers:dataCar})
+      //-----------------------
+      //const mytemcounter = this.state.counter
+      this.state.counter.map((item, i) => {
+        if(item.productsize ==sized && item.productname==data.productName)
+        {
+           this.state.counter.splice(i, 1)
+          //this.setState({counter:mytemcounter})
+         // console.log(this.state.counter)
+        }
+      })
+      
+
+    }
+
+  }
   
 
   modal1() {}
 
-  login = (specialRequest, phone, attendees, reservationMessage) => {
-    /*axios.post(`https://cairojazzclub.com/wp-json/fbr/reservation/?event_id=${this.state.eventid}&user_id=2866949966694553&attendees=${attendees}&event_place=edrftg&event_type=sedrf&user_address=dsfdgrgd&Time_Slot=084844&Speacial_request=${specialRequest}&request_ttable&Phone_Number=${phone}&accessToken`)
-          .then(function (response) {
-            alert('report: ' + response.data.message )
-     
-          })
-          
-          .catch(function (error) {
-            console.log(error);
-          });*/
-  };
   _renderModalContent = () =>
     this.state.details ? (
       <View style={styles.modalContent}>
@@ -131,7 +174,7 @@ class Eventscrollnew extends Component {
             position: "absolute",
             bottom: "88%",
             fontSize:15,
-            //fontFamily: "normal",
+            fontFamily: this.state.font,
           }}
         >{this.state.productname}</Text>
         <Image
@@ -146,173 +189,67 @@ class Eventscrollnew extends Component {
           }}
         />
         {/*----------------------------------------------------------------- */}
-        <Image
-          source={require("./images/sizebg.png")}
-          style={{
-            position: "absolute",
-            bottom: "73%",
-            width: "45%",
-            height: "15%",
-            left: "50%",
-            resizeMode: "contain",
-          }}
-        />
-        <TouchableOpacity
-          style={{ position: "absolute", bottom: "77.5%", left: "86%" }}
-          onPress={() => this.props.increaseCounter()}
-        >
+          
+        {this.state.sizeAndPrice? (this.state.sizeAndPrice.map((item, i) => {
+         return (
+          <View style={{width:'60%',height:'8.5%',left:'15%',bottom:'32%',flexDirection:'row',paddingBottom:5,margin:5, }}>
           <Image
-            source={require("./images/plusicon.png")}
-            style={{ width: 35, height: 35 }}
-          />
-        </TouchableOpacity>
-        <Text
-          style={{
-            position: "absolute",
-            bottom: "79%",
-            left: "82.5%",
-            fontWeight: "bold",
-            fontSize: 15,
-          }}
-        >
-          {this.props.counter}
-        </Text>
-        <TouchableOpacity
-          style={{ position: "absolute", bottom: "77.5%", left: "73%" }}
-          onPress={() => this.props.decreaseCounter()}
-        >
-          <Image
-            source={require("./images/minceicon.png")}
-            style={{ width: 35, height: 35 }}
-          />
-        </TouchableOpacity>
+        source={require("./images/sizebg.png")}
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          resizeMode: "contain",
+        }}
+      />
+      <TouchableOpacity
+        onPress={()=>this.onChangeQual(i,true,this.state.myitem,item.size,item.price)}
+        style={{ position: "absolute", left:'70%',top:'15%',zIndex:500}}
+ 
+      >
         <Image
-          source={require("./images/ricesize.png")}
-          style={{
-            position: "absolute",
-            bottom: "80%",
-            width: "11%",
-            height: "5%",
-            left: "54%",
-            resizeMode: "contain",
-          }}
+          source={require("./images/plusicon.png")}
+          style={{ width: 35, height: 35,resizeMode:'contain' }}
         />
+      </TouchableOpacity>
+      <Text
+        style={{
+          position: "absolute",
+          top:'17%',
+          left:'65%',
+          fontWeight: "bold",
+          fontFamily:this.state.font,
+          fontSize: 15,
+        }}
+      >
+        {this.state.sizenumbers[i]}
+      </Text>
+      <TouchableOpacity
+      onPress={()=>this.onChangeQual(i,false,this.state.myitem,item.size,item.price)}
+        style={{ position: "absolute", left:'50%',top:'15%',zIndex:500}}
+      
+      >
         <Image
-          source={require("./images/pricesample.png")}
-          style={{
-            position: "absolute",
-            bottom: "76%",
-            width: "15%",
-            height: "5%",
-            left: "54%",
-            resizeMode: "contain",
-          }}
+          source={require("./images/minceicon.png")}
+          style={{ width: 35, height: 35 }}
         />
+      </TouchableOpacity>
+        <Text style={{left:'20%',top:'5%',position:'absolute',fontFamily:this.state.font,}}>{item.size}</Text>
+        <Text style={{left:'20%',top:'45%',position:'absolute',fontFamily:this.state.font,}}>{item.price} EGP</Text>
+       
+    
+       </View>
+         );
+      })):(<View></View>)}
+         
+        
+       
         {/*----------------------------------------------------------------- */}
-
-        <Image
-          source={require("./images/sizebg.png")}
-          style={{
-            position: "absolute",
-            bottom: "64%",
-            width: "45%",
-            height: "15%",
-            left: "50%",
-            resizeMode: "contain",
-          }}
-        />
-        <TouchableOpacity
-          style={{ position: "absolute", bottom: "68.5%", left: "86%" }}
-        >
-          <Image
-            source={require("./images/plusicon.png")}
-            style={{ width: 35, height: 35 }}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{ position: "absolute", bottom: "68.5%", left: "73%" }}
-        >
-          <Image
-            source={require("./images/minceicon.png")}
-            style={{ width: 35, height: 35 }}
-          />
-        </TouchableOpacity>
-        <Image
-          source={require("./images/ricesize.png")}
-          style={{
-            position: "absolute",
-            bottom: "71%",
-            width: "11%",
-            height: "5%",
-            left: "54%",
-            resizeMode: "contain",
-          }}
-        />
-        <Image
-          source={require("./images/pricesample.png")}
-          style={{
-            position: "absolute",
-            bottom: "67%",
-            width: "15%",
-            height: "5%",
-            left: "54%",
-            resizeMode: "contain",
-          }}
-        />
-        {/*----------------------------------------------------------------- */}
-
-        <Image
-          source={require("./images/sizebg.png")}
-          style={{
-            position: "absolute",
-            bottom: "55%",
-            width: "45%",
-            height: "15%",
-            left: "50%",
-            resizeMode: "contain",
-          }}
-        />
-        <TouchableOpacity
-          style={{ position: "absolute", bottom: "59.5%", left: "86%" }}
-        >
-          <Image
-            source={require("./images/plusicon.png")}
-            style={{ width: 35, height: 35 }}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{ position: "absolute", bottom: "59.5%", left: "73%" }}
-        >
-          <Image
-            source={require("./images/minceicon.png")}
-            style={{ width: 35, height: 35 }}
-          />
-        </TouchableOpacity>
-        <Image
-          source={require("./images/ricesize.png")}
-          style={{
-            position: "absolute",
-            bottom: "62%",
-            width: "11%",
-            height: "5%",
-            left: "54%",
-            resizeMode: "contain",
-          }}
-        />
-        <Image
-          source={require("./images/pricesample.png")}
-          style={{
-            position: "absolute",
-            bottom: "58%",
-            width: "15%",
-            height: "5%",
-            left: "54%",
-            resizeMode: "contain",
-          }}
-        />
+       
+      
         {/*----------------------------------------------------------------- */}
         <TouchableOpacity
-          onPress={() => this.onClickAddCart(this.state.myitem)}
+          onPress={() => this.onClickAddCart2(this.state.counter)}
           style={{
             position: "absolute",
             bottom: "44%",
@@ -323,29 +260,6 @@ class Eventscrollnew extends Component {
           <Image
             source={require("./images/addtocartbutton.png")}
             style={{ width: 220, height: 100, resizeMode: "contain" }}
-          />
-
-          <Image
-            source={require("./images/carttamween.png")}
-            style={{
-              position: "absolute",
-              bottom: "47%",
-              width: "12%",
-              height: "12%",
-              left: "81%",
-              resizeMode: "contain",
-            }}
-          />
-          <Image
-            source={require("./images/addtocartword.png")}
-            style={{
-              position: "absolute",
-              bottom: "48%",
-              width: "25%",
-              height: "10%",
-              left: "54%",
-              resizeMode: "contain",
-            }}
           />
         </TouchableOpacity>
         {/*------------------------------------------------------------------- */}
@@ -583,14 +497,36 @@ class Eventscrollnew extends Component {
           }}
         />
         {/*------------------------------------------------------------------- */}
+       { this.state.myRelateddata? (<TouchableOpacity onPress={
+         () => {
+          //this.numberCarousel.scrollToIndex(index)
+          
+          this.state.productname = this.state.myRelateddata[0].productName;
+          this.state.eventid = this.state.myRelateddata[0]._id;
+          this.state.productimage = this.state.myRelateddata[0].productimage;
+          this.state.myitem = this.state.myRelateddata[0];
+          
+         
+          this.setState({ visibleModal: 5 });
+
+          fetch('http://www.tamweenymarket.com/api/products/'+ this.state.myRelateddata[0]._id+'/related')
+          .then((response) => response.json())
+          .then((responseJson) => {
+            this.setState({
+              myRelateddata: responseJson,
+            });
+          });
+  
+        }
+       } style={{position:'absolute',width:'60%',height:'70%',top:'30%',zIndex:5,left:'65%'}}>
         <Image
-          source={require("./images/milk.png")}
+          source={{uri:this.state.myRelateddata[0].productimage}}
           style={{
             position: "absolute",
-            bottom: "5%",
-            width: "15%",
-            height: "15%",
-            left: "75%",
+            bottom: "7%",
+            width: "30%",
+            height: "20%",
+            left:'10.5%',
             resizeMode: "contain",
           }}
         />
@@ -598,21 +534,50 @@ class Eventscrollnew extends Component {
           source={require("./images/detailsprodnamebox.png")}
           style={{
             position: "absolute",
-            top: "91%",
-            width: "30%",
-            height: "12%",
-            left: "67.5%",
+            top: "81%",
+            width: "50%",
+            height: "30%",
+            
             resizeMode: "contain",
           }}
         />
+        <Text style={{position:'absolute', top: "92%",
+            width: "25%",
+            height: "12%",
+            left:'10%',
+            fontSize:10,
+            fontFamily:this.state.font,}}>{this.state.myRelateddata[0].productName}</Text>
+            </TouchableOpacity>):(<View></View>)}
+        
+        
+            { this.state.myRelateddata? (<TouchableOpacity onPress={
+         () => {
+          //this.numberCarousel.scrollToIndex(index)
+          
+          this.state.productname = this.state.myRelateddata[1].productName;
+          this.state.eventid = this.state.myRelateddata[1]._id;
+          this.state.productimage = this.state.myRelateddata[1].productimage;
+          this.state.myitem = this.state.myRelateddata[1];
+          this.setState({ visibleModal: 5 });
+
+          fetch('http://www.tamweenymarket.com/api/products/'+ this.state.myRelateddata[1]._id+'/related')
+          .then((response) => response.json())
+          .then((responseJson) => {
+            this.setState({
+              myRelateddata: responseJson,
+            });
+          });
+  
+        }
+       } style={{position:'absolute',width:'60%',height:'70%',top:'30%',zIndex:4,left:'35%'}}>
         <Image
-          source={require("./images/zabady.png")}
+          source={{uri:this.state.myRelateddata[1].productimage}}
           style={{
             position: "absolute",
-            bottom: "4.5%",
-            width: "18%",
-            height: "18%",
-            left: "40%",
+            bottom: "7%",
+            width: "30%",
+            height: "20%",
+            left:'10.5%',
             resizeMode: "contain",
           }}
         />
@@ -620,21 +585,49 @@ class Eventscrollnew extends Component {
           source={require("./images/detailsprodnamebox.png")}
           style={{
             position: "absolute",
-            top: "91%",
-            width: "30%",
-            height: "12%",
-            left: "33.5%",
+            top: "81%",
+            width: "50%",
+            height: "30%",
+            
             resizeMode: "contain",
           }}
         />
+        <Text style={{position:'absolute', top: "91.5%",
+            width: "25%",
+            height: "12%",
+            left:'10%',
+            fontSize:11,fontFamily:this.state.font,}}>{this.state.myRelateddata[1].productName}</Text>
+            </TouchableOpacity>):(<View></View>)}
+        
+            {this.state.myRelateddata?(<TouchableOpacity 
+            onPress={
+              () => {
+               //this.numberCarousel.scrollToIndex(index)
+               
+               this.state.productname = this.state.myRelateddata[2].productName;
+               this.state.eventid = this.state.myRelateddata[2]._id;
+               this.state.productimage = this.state.myRelateddata[2].productimage;
+               this.state.myitem = this.state.myRelateddata[2];
+               this.setState({ visibleModal: 5 });
+     
+               fetch('http://www.tamweenymarket.com/api/products/'+ this.state.myRelateddata[2]._id+'/related')
+               .then((response) => response.json())
+               .then((responseJson) => {
+                 this.setState({
+                   myRelateddata: responseJson,
+                 });
+               });
+       
+             }
+            } style={{position:'absolute',width:'60%',height:'70%',top:'30%',zIndex:3,left:'5%'}}>
         <Image
-          source={require("./images/milk2.png")}
+          source={{uri:this.state.myRelateddata[2].productimage}}
           style={{
             position: "absolute",
-            bottom: "5%",
-            width: "15%",
-            height: "15%",
-            left: "10%",
+            bottom: "7%",
+            width: "30%",
+            height: "20%",
+            left:'10.5%',
             resizeMode: "contain",
           }}
         />
@@ -642,13 +635,19 @@ class Eventscrollnew extends Component {
           source={require("./images/detailsprodnamebox.png")}
           style={{
             position: "absolute",
-            top: "91%",
-            width: "30%",
-            height: "12%",
-            left: "2.5%",
+            top: "81%",
+            width: "50%",
+            height: "30%",
+            
             resizeMode: "contain",
           }}
         />
+        <Text style={{position:'absolute', top: "91.5%",
+            width: "25%",
+            height: "12%",
+            left:'10%',
+            fontSize:11,fontFamily:this.state.font,}}>{this.state.myRelateddata[2].productName}</Text>
+            </TouchableOpacity>):(<View></View>)}
       </View>
     ) : (
       <View style={styles.modalContent}>
@@ -682,9 +681,6 @@ class Eventscrollnew extends Component {
         />
         <TouchableOpacity
           onPress={() => {
-            //this.numberCarousel.scrollToIndex(index);
-            //this.state.productname=this.state.mydata[index].productname
-            //this.state.eventid = this.state.mydata[index].id
             this.setState({ details: true });
           }}
           style={{
@@ -824,14 +820,14 @@ class Eventscrollnew extends Component {
     );
 
   renderItem = ({ item, index }) => {
-    const { startDate, content, productimage, productName } = item;
+    const { startDate, content, productimage, productName,_id ,productprice,sizeAndPrice} = item;
 
     return (
       
       <View
         style={{
           flex: 1,
-          height: 1000,
+          height: 500,
           zIndex: 9000,
         }}
       >
@@ -840,15 +836,7 @@ class Eventscrollnew extends Component {
           //activeOpacity={1}
           style={styles.item}
           onPress={() => {
-            //this.numberCarousel.scrollToIndex(index)
-            
-            this.state.productname = this.state.mydata[index].productName;
-            this.state.eventid = this.state.mydata[index].id;
-            this.state.productimage = this.state.mydata[index].productimage;
-            this.state.myitem = this.state.mydata[index];
-            this.setState({ visibleModal: 5 });
-            //console.log(this.state.productimage);
-           // console.log(productName);
+           
           }}
         >
           <Image
@@ -863,18 +851,58 @@ class Eventscrollnew extends Component {
               zIndex: 9,
             }}
           />
-          <View style={{position:'absolute',width:'70%',bottom:'80%',left:'10%'}}>
-          <Text style={{ fontSize: 15, zIndex: 10,}}>
+          <View style={{position:'absolute',width:'75%',bottom:'80%',left:'10%'}}>
+          <Text style={{ fontSize: 15, zIndex: 10,textAlign:'center',fontFamily:this.state.font,}}>
             {productName}
           </Text>
           </View>
-
-          <Image
+          <Draggable 
+            imageSource={{uri:productimage}} 
+            renderSize={100} 
+            x={10}
+            y={75}
+            z={10}
+            shouldReverse={true}
+            //onDrag={}
+            //onDrag={()=>this.props.parentReference('data')}
+           
+            onDragRelease={(gestureState)=>
+              //this.onClickAddCart(this.state.mydata[index])
+              {gestureState.nativeEvent.locationX >=screenWidth/2.4 ? (this.onClickAddCart(this.state.mydata[index])):(alert('please drag the item to the footer'))}
+            }
+        />  
+        
+          {/*<Image
             source={{ uri: productimage }}
             style={styles.imageBackground}
-          />
+          />*/}
         </TouchableOpacity>
-        <TouchableOpacity style={styles.item2}>
+        <TouchableOpacity style={{zIndex:1000000}}  onPress={() => {
+              //this.numberCarousel.scrollToIndex(index)
+              
+              this.state.productname = this.state.mydata[index].productName;
+              this.state.eventid = this.state.mydata[index]._id;
+              this.state.productimage = this.state.mydata[index].productimage;
+              this.state.myitem = this.state.mydata[index];
+             
+              
+              this.state.sizeAndPrice=this.state.mydata[index].sizeAndPrice;
+              
+              this.setState({sizenumbers:[0,0,0]})
+              this.setState({counter:[]})
+              this.setState({ visibleModal: 5 });
+
+              fetch('http://www.tamweenymarket.com/api/products/'+ this.state.mydata[index]._id+'/related')
+              .then((response) => response.json())
+              .then((responseJson) => {
+                this.setState({
+                  myRelateddata: responseJson,
+                });
+              });
+
+              
+      
+            }} style={styles.item2}>
           <Image
             source={require("./images/sizeofprod.png")}
             style={{
@@ -882,9 +910,10 @@ class Eventscrollnew extends Component {
               height: 18,
               resizeMode: "contain",
               position: "absolute",
-              zIndex: 920,
+              zIndex: 100001,
             }}
           />
+          <Text style={{zIndex:100002,top:'13%',color:'red',textAlign:'center',left:'5%',fontFamily:this.state.font,}}>{sizeAndPrice[0].price} EGP</Text>
           <Image
             source={require("./images/sizesbutton.png")}
             style={{
@@ -924,7 +953,7 @@ class Eventscrollnew extends Component {
           style={styles.carousel}
           data={this.state.mydata}
           renderItem={this.renderItem}
-          itemWidth={138}
+          itemWidth={140}
           inActiveScale={1}
           inActiveOpacity={1}
           containerWidth={width}
@@ -937,11 +966,50 @@ class Eventscrollnew extends Component {
       </View>
     );
   }
+
+
+
+  onClickAddCart2(data) {
+    
+    //const itemcart = data;
+    
+    
+    
+    AsyncStorage.getItem("cart")
+      .then((dataCart) => {
+        if (dataCart !== null) {
+          
+          const cart = JSON.parse(dataCart);
+          data.map((item,i)=>{
+          cart.push(data[i]);
+          AsyncStorage.setItem("cart", JSON.stringify(cart));
+          })
+        } else {
+          
+          const cart = [];
+          data.map((item,i)=>{
+          cart.push(data[i]);
+          AsyncStorage.setItem("cart", JSON.stringify(cart));
+          })
+
+        }
+        alert("Added to cart");
+      })
+      .catch((err) => {
+        alert(err);
+      });
+      
+    
+  }
+
+
   onClickAddCart(data) {
+    
     const itemcart = {
       productname: data.productName,
       productimage: data.productimage,
-      price: "10",
+      productsize:data.sizeAndPrice[0].size,
+      price: data.sizeAndPrice[0].price,
       quantity: 1,
     };
     AsyncStorage.getItem("cart")
@@ -954,27 +1022,19 @@ class Eventscrollnew extends Component {
           const cart = [];
           cart.push(itemcart);
           AsyncStorage.setItem("cart", JSON.stringify(cart));
-          console.log(cart);
+
         }
-        alert("ADD success el7");
+        alert("added to cart");
       })
       .catch((err) => {
         alert(err);
       });
+    
   }
+
 }
 
-/*function mapStateToProps(state)
-{
-  return {counter: state.counter}
-}
 
-function mapDispatchToProps(dispatch){
-  return {
-    increaseCounter : () => dispatch({type:'INCREASE_COUNTER'}),
-    decreaseCounter : () => dispatch({type:'DECREASE_COUNTER'}),
-  }
-}*/
 export default Eventscrollnew;
 
 const styles = StyleSheet.create({
@@ -1007,59 +1067,11 @@ const styles = StyleSheet.create({
     flex: 1,
     top: 100,
     height: 1000,
-    zIndex: 10000,
+    zIndex: 1000,
     // borderRadius: 1200/ 2,
   },
-  item3: {
-    left: "65%",
-    flex: 1,
-    bottom: 60,
-    height: 1000,
-    zIndex: 10000,
-    // borderRadius: 1200/ 2,
-  },
-  item4: {
-    left: "65%",
-    flex: 1,
-    bottom: 70,
-    height: 1000,
-    zIndex: 10000,
-    // borderRadius: 1200/ 2,
-  },
-  imageBackground: {
-    resizeMode: "contain",
-    //backgroundColor: '#EBEBEB',
-    position: "absolute",
-    //borderRadius: 400/ 2,
-    height: 100,
-    width: 100,
-    zIndex: 100,
-    top: "45%",
-    left: "11%",
-  },
-  rightTextContainer: {
-    marginLeft: "auto",
-    marginRight: -2,
-    backgroundColor: "rgba(49, 49, 51,0.5)",
-    padding: 3,
-    marginTop: 3,
-    borderTopLeftRadius: 5,
-    borderBottomLeftRadius: 5,
-  },
-  rightText: { color: "white" },
-  lowerContainer: {
-    flex: 1,
+ 
 
-    margin: 10,
-  },
-  titleText: {
-    fontWeight: "bold",
-    fontSize: 18,
-  },
-  contentText: {
-    marginTop: 10,
-    fontSize: 12,
-  },
   modal: {
     flex: 7,
 
@@ -1084,146 +1096,7 @@ const styles = StyleSheet.create({
     right: "0%",
     left: "18%",
   },
-  modal2: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    bottom: "62%",
-    left: "30%",
-
-    margin: 50,
-    zIndex: 200,
-  },
-  profile3: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
-    bottom: "46%",
-    left: "61%",
-
-    width: 80,
-    height: 80,
-    borderRadius: 400 / 2,
-
-    zIndex: 41,
-  },
-
-  profile4: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
-    bottom: "46%",
-    left: "38.5%",
-
-    width: 80,
-    height: 80,
-    borderRadius: 400 / 2,
-
-    zIndex: 41,
-  },
-  profile5: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
-    bottom: "46%",
-    left: "16%",
-
-    width: 80,
-    height: 80,
-    borderRadius: 400 / 2,
-
-    zIndex: 41,
-  },
-  minusbutton: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
-
-    width: 35,
-    height: 30,
-
-    zIndex: 41,
-  },
-  plusbutton: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
-
-    width: 35,
-    height: 30,
-
-    zIndex: 41,
-  },
-  input2: {
-    margin: 5,
-    height: 40,
-    borderColor: "white",
-    borderWidth: 20,
-    width: 250,
-    bottom: "23%",
-    paddingLeft: 5,
-    left: "17%",
-    fontSize: 5,
-    fontWeight: "bold",
-
-    color: "black",
-    position: "absolute",
-    zIndex: 40,
-  },
-  input: {
-    margin: 5,
-    height: 20,
-    borderColor: "white",
-    borderWidth: 10,
-    borderTopColor: "black",
-    borderBottomColor: "black",
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderTopRightRadius: 1,
-    borderTopLeftRadius: 1,
-    borderLeftColor: "black",
-    borderRightColor: "black",
-    width: 110,
-    fontSize: 5,
-    left: "52%",
-    bottom: "34%",
-    paddingLeft: 8,
-    fontWeight: "bold",
-
-    color: "black",
-    position: "absolute",
-    zIndex: 40,
-  },
-  submitButton: {
-    backgroundColor: "#752225",
-    height: 30,
-    width: 70,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: "#752225",
-  },
-  submitButtonText: {
-    color: "white",
-    paddingLeft: 10,
-    paddingTop: 6,
-    fontSize: 9,
-    fontFamily: "normal",
-    zIndex: 19,
-  },
-  modalBox: {
-    overflow: "hidden",
-    alignItems: "center",
-    justifyContent: "center",
-    height: 200,
-    width: 300,
-    backgroundColor: "transparent",
-    zIndex: 9000,
-  },
+  
   bottomModal: {
     justifyContent: "flex-end",
     margin: 0,

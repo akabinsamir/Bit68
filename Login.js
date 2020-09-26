@@ -6,18 +6,20 @@ import {
   View,
   Image,
   ImageBackground,
-  Button,
   TouchableOpacity,
   TextInput,
   Dimensions,
 } from "react-native";
 import axios from "axios";
-//import Home from "./Home";
-
 import * as Font from "expo-font";
+import Modal from "react-native-modal";
+import * as Facebook from 'expo-facebook';
+import * as Google from 'expo-google-app-auth';
 
-//import Intro from "./Intro";
+//import {Font} from 'expo';
 
+let screenWidth = Dimensions.get("window").width;
+let screenHeight = Dimensions.get("window").height;
 
 export default class Login extends React.Component {
   constructor() {
@@ -31,8 +33,9 @@ export default class Login extends React.Component {
       validation: "",
 
       fontLoaded: false,
-
+      visibleModal: 2,
       checkedboxes: "",
+      font:'normal',
     };
   }
 
@@ -43,7 +46,14 @@ export default class Login extends React.Component {
     console.log(this.state.checked);
   }
 
+  
   async componentDidMount() {
+
+   await Font.loadAsync({
+      'main':require('./assets/fonts/Tajawal-Regular.ttf')
+    })
+    
+    this.setState({font:'main'})
     const { navigation } = this.props;
 
     const id = navigation.getParam("id", "some default value");
@@ -59,6 +69,63 @@ export default class Login extends React.Component {
     });
 
     this.setState({ fontLoaded: true });
+
+    
+  }
+
+  async googleLogin()
+  {
+    const that = this;
+    try {
+      const result = await Google.logInAsync({
+        androidClientId: '295549477966-mmfqj7gfej3rfq6eapjuh3igo0kqqc2b.apps.googleusercontent.com',
+        scopes: ['profile', 'email'],
+      });
+      
+      if (result.type === 'success') {
+       
+        //console.log(result);
+        that.props.navigation.navigate("Home",{
+          username:result.user.name
+        });
+        that.props.navigation.navigate("Map");
+        
+      } else {
+        console.log('cancelled')
+      }
+    } catch (e) {
+      console.log('cancelled',e)
+    }
+  
+
+  }
+  async  FaceboooklogIn() {
+    const that = this;
+    try {
+      await Facebook.initializeAsync('3636195366400231');
+      const {
+        type,
+        token,
+        expires,
+        permissions,
+        declinedPermissions,
+      } = await Facebook.logInWithReadPermissionsAsync({
+        permissions: ['public_profile'],
+      });
+      if (type === 'success') {
+        // Get the user's name using Facebook's Graph API
+        const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
+       
+       that.props.navigation.navigate("Home",{
+        username:(await response.json()).name
+      });
+      that.props.navigation.navigate("Map");
+      } else {
+        // type === 'cancel'
+      }
+    } catch ({ message }) {
+      alert(`Facebook Login Error: ${message}`);
+    }
   }
 
   handleusername = (text) => {
@@ -86,18 +153,19 @@ export default class Login extends React.Component {
       alert("please check the missing fields");
     } else {
       axios
-        .post("http://192.168.0.100:3000/api/user/login", {
+        .post("http://www.tamweenymarket.com/api/user/login", {
           username: this.state.username,
           password: this.state.password,
         })
         .then(function (response) {
-          if (response.data.message) {
-            alert(response.data.message);
-            console.log(response.data.message);
-          } else {
-            alert("hello " + response.data + " !");
-            that.props.navigation.navigate("Home");
-          }
+        
+           
+            that.props.navigation.navigate("Home",{
+              username:response.data
+            });
+            that.props.navigation.navigate("Map");
+            //alert("hello " + response.data + " !");
+          
         })
         .catch(function (error) {
           console.log(error);
@@ -105,184 +173,193 @@ export default class Login extends React.Component {
         });
     }
   };
-  render() {
-    let screenWidth = Dimensions.get("window").width;
-    let screenHeight = Dimensions.get("window").height;
+  _renderModalContent = () => (
+    <View style={styles.modalContent}>
+      <View style={styles.container}>
+        <Image source={require("./images/welcome.png")} style={{
+            resizeMode: "contain",
+            bottom: screenHeight / 1.8,
+            width: screenWidth / 2.4,
+            height: screenHeight / 4,
+            zIndex: 300,}} />
+        <Image
+          source={require("./images/login.png")}
+          style={{
+            resizeMode: "contain",
 
-    return (
-      <ImageBackground
-        source={require("./images/loginbg.png")}
-        style={{ width: "104%", height: "100%", right: "3%" }}
-      >
-        <View style={styles.container}>
-          <Image
-            source={require("./images/tamweenlogo.png")}
-            style={styles.logo}
-          />
-
-          <TextInput
-            style={styles.input}
-            underlineColorAndroid="transparent"
-            placeholder="Username"
-            placeholderTextColor="white"
-            autoCapitalize="none"
-            onChangeText={this.handleusername}
-          />
-          <Image
-            source={require("./images/fieldbg.png")}
-            style={{
-              position: "absolute",
-              bottom: "72%",
-              opacity: 0.8,
-              right: "18%",
-              height: 50.5,
-              width: 273,
-            }}
-          />
-          <Image
-            source={require("./images/usernamelogo.png")}
-            style={{
-              position: "absolute",
-              bottom: "72.8%",
-              opacity: 0.8,
-              right: "70%",
-              height: 30,
-              width: 27,
-            }}
-          />
-
-          <TextInput
-            style={{
-              fontFamily: "normal",
-              height: 40,
-              textAlign: "center",
-              width: "82.5%",
-              bottom: "56.2%",
-              opacity: 0.8,
-              zIndex: 50,
-              color: "white",
-              fontSize: 28,
-            }}
-            underlineColorAndroid="transparent"
-            placeholder="Password"
-            placeholderTextColor="white"
-            autoCapitalize="none"
-            onChangeText={this.handlepassword}
-          />
-          <Image
-            source={require("./images/fieldbg.png")}
-            style={{
-              position: "absolute",
-              bottom: "66.8%",
-              opacity: 0.8,
-              right: "18%",
-              height: 50.5,
-              width: 273,
-            }}
-          />
-          <Image
-            source={require("./images/passwordlogo.png")}
-            style={{
-              position: "absolute",
-              bottom: "67.5%",
-              opacity: 0.8,
-              right: "70%",
-              height: 32,
-              width: 27,
-            }}
-          />
-
-          <Text
-            style={{
-              position: "absolute",
-              fontSize: 17,
-              bottom: "61.6%",
-              color: "white",
-              opacity: 0.8,
-              left: "35%",
-              fontFamily: "normal",
-            }}
-          >
-            Forgot Password?
-          </Text>
-        </View>
-
-        <TouchableOpacity
+            bottom: screenHeight / 1.6,
+            width: screenWidth / 3,
+            height: screenHeight /25,
+            zIndex: 300,
+          }}
+        />
+        
+        <TextInput
+          style={{
+            //right:screenWidth/20,
+            fontFamily: this.state.font,
+            height: 40,
+            textAlign: 'left',
+            width: screenWidth/1.8,
+            bottom: "36%",
+            zIndex: 400,
+            color: "gray",
+            //backgroundColor:'black',
+            fontSize: 18,
+          }}
+          underlineColorAndroid="transparent"
+          placeholder="Username"
+          placeholderTextColor="gray"
+          autoCapitalize="none"
+          onChangeText={this.handleusername}
+        />
+        <Image
+          source={require("./images/tamweenyfield.png")}
+          style={{
+            position: "absolute",
+            bottom: "75%",
+            opacity: 0.8,
+            height: 50.5,
+            width: 273,
+          }}
+        />
+        <Image
+          source={require("./images/usernamelogo.png")}
+          style={{
+            position: "absolute",
+            bottom: "76.5%",
+            tintColor:'gray',
+            height: screenHeight/40,
+            width: screenWidth/5,
+            resizeMode:'contain',
+            left:'45%'
+          }}
+        />
+        <TextInput
+          style={{
+            //right:screenWidth/5.3,
+            height: 40,
+            textAlign: "left",
+            width: screenWidth/1.8,
+            bottom: "34.5%",
+            fontFamily: this.state.font,
+            zIndex: 400,
+            color: "gray",
+            fontSize: 18,
+           // backgroundColor:'black'
+          }}
+          underlineColorAndroid="transparent"
+          placeholder="Password"
+          placeholderTextColor="gray"
+          autoCapitalize="none"
+          onChangeText={this.handlepassword}
+          secureTextEntry={true}
+        />
+        <Image
+          source={require("./images/tamweenyfield.png")}
+          style={{
+            position: "absolute",
+            bottom: "70%",
+            opacity: 0.8,
+            height: 50.5,
+            width: 273,
+          }}
+        />
+        <Image
+          source={require("./images/passwordlogo.png")}
+          style={{
+            position: "absolute",
+            bottom: "71.5%",
+            tintColor:'gray',
+            height: screenHeight/40,
+            width: screenWidth/5,
+            resizeMode:'contain',
+            left:'45%'
+          }}
+        />
+        
+      </View>
+      <TouchableOpacity
           style={styles.submitButton}
           onPress={() => this.login(this.state.username, this.state.password)}
         >
           <Image
-            source={require("./images/loginbutton.png")}
-            style={{
-              width: 220,
-              resizeMode: "contain",
-              right: "40%",
-              bottom: 90,
-              zIndex: 200,
-            }}
-          />
+          source={require("./images/loginbutton.png")}
+          style={{
+            width: screenWidth/1.2,
+            
+            resizeMode: "contain",
+            zIndex: 50000,
+            
+          }}
+        />
         </TouchableOpacity>
         <Text
           style={{
             position: "absolute",
             fontSize: 20,
             bottom: "27.6%",
-            color: "white",
+            color: "gray",
             opacity: 0.8,
-            left: "33%",
-            fontFamily: "normal",
+            left: screenWidth/3,
+            fontFamily: this.state.font,
+         
           }}
         >
-          or Sign up with
+          or Login with
         </Text>
         <Text
           style={{
             position: "absolute",
             fontSize: 20,
             bottom: "28.6%",
-            color: "white",
+            color: "gray",
             opacity: 0.8,
-            left: "15%",
+            left: screenWidth/5,
           }}
         >
-          ______
+          ___
         </Text>
         <Text
           style={{
             position: "absolute",
             fontSize: 20,
             bottom: "28.6%",
-            color: "white",
+            color: "gray",
             opacity: 0.8,
-            left: "70%",
+            left: screenWidth/1.4,
           }}
         >
-          ______
+          ___
         </Text>
 
-        <TouchableOpacity style={styles.submitButton2}>
+        <TouchableOpacity
+        onPress={this.FaceboooklogIn.bind(this)}
+         style={styles.submitButton2}>
           <Image
             source={require("./images/facebook.png")}
-            style={{ width: 80, resizeMode: "contain" }}
+            style={{ width: screenHeight/11, resizeMode: "contain" }}
           />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.submitButton3}>
+        <TouchableOpacity
+        onPress={this.googleLogin.bind(this)}
+         style={styles.submitButton3}>
           <Image
             source={require("./images/google.png")}
-            style={{ width: 80, resizeMode: "contain" }}
+            style={{ width: screenHeight/11, resizeMode: "contain" }}
           />
         </TouchableOpacity>
 
         <Text
           style={{
             position: "absolute",
-            fontSize: 20,
-            bottom: "12.6%",
-            color: "white",
+            fontSize: 18,
+            bottom: "7.6%",
+            color: "gray",
             opacity: 0.8,
-            left: "14%",
-            fontFamily: "normal",
+            left: "10%",
+            fontFamily: this.state.font,
           }}
         >
           Don't have an account?
@@ -290,31 +367,73 @@ export default class Login extends React.Component {
         <Text
           onPress={() => {
             //on clicking we are going to open the URL using Linking
-            this.props.navigation.navigate("Moreinfo");
+            this.props.navigation.navigate("Signup");
           }}
           style={{
             position: "absolute",
             fontSize: 20,
-            bottom: "12.8%",
-            color: "white",
+            bottom: "7.6%",
+            color: "gray",
             opacity: 0.8,
             left: "67%",
-            fontWeight: "bold",
+            zIndex:10000,
+            fontFamily:this.state.font,
           }}
         >
           Sign up
         </Text>
+    </View>
+  );
+
+  render() {
+    let screenWidth = Dimensions.get("window").width;
+    let screenHeight = Dimensions.get("window").height;
+
+    return (
+      <ImageBackground
+        source={require("./images/splashone.png")}
+        style={{ width: screenWidth, height: screenHeight ,zIndex:0 }}
+      >
+        <Modal
+          style={styles.bottomModal}
+          isVisible={this.state.visibleModal === 2}
+          animationIn={"slideInDown"}
+          animationOut={"slideOutUp"}
+          backdropOpacity={0}
+          //onSwipeComplete={() => this.setState({ visibleModal: null })}
+          //scrollVertical={true}
+          coverScreen={false}
+        >
+          {this._renderModalContent()}
+        </Modal>
       </ImageBackground>
     );
   }
 }
 const styles = StyleSheet.create({
+  bottomModal: {
+    justifyContent: "flex-end",
+    margin: 0,
+    zIndex: 40000,
+  },
+  modalContent: {
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderColor: "rgba(0, 0, 0, 0.1)",
+    height: "82%",
+    width: screenWidth,
+    zIndex: 30000,
+  },
   container: {
     flex: 1,
-    marginTop: 0,
+    bottom:screenWidth/6,
     marginBottom: -550,
     alignItems: "center",
     justifyContent: "center",
+    
   },
   overlay: {
     position: "absolute",
@@ -346,10 +465,10 @@ const styles = StyleSheet.create({
   logo: {
     resizeMode: "contain",
 
-    bottom: "35%",
-    width: "70%",
-    height: "70%",
-    zIndex: 3,
+    bottom: screenHeight / 2.3,
+    width: screenWidth / 2.5,
+    height: screenHeight / 5,
+    zIndex: 300,
   },
 
   header: {
@@ -417,60 +536,58 @@ const styles = StyleSheet.create({
     height: 32,
   },
   input: {
-    margin: 5,
+    right:screenWidth/7,
     height: 60,
-    opacity: 0.8,
     width: "82.5%",
-    bottom: "57.5%",
+    bottom: "45%",
     textAlign: "center",
     fontFamily: "normal",
-    color: "white",
-    fontSize: 28,
-    zIndex: 200,
+    color: "gray",
+    fontSize: 18,
+    zIndex: 300,
   },
   input2: {
-    margin: 5,
+    
     height: 60,
-    opacity: 0.8,
+    right:screenWidth/5.3,
     width: "82.5%",
-    bottom: "57.5%",
+    bottom: "44.5%",
     fontFamily: "normal",
     textAlign: "center",
-    color: "white",
-    zIndex: 200,
-    fontSize: 20,
-    right: "2%",
+    color: "gray",
+    zIndex: 300,
+    fontSize: 18,
   },
 
   submitButton: {
-    paddingLeft: "7%",
-    paddingTop: "3%",
-    margin: "4%",
-    height: "5.5%",
-    width: "37%",
-    bottom: "30%",
-    left: "25.5%",
-    zIndex: 300,
+ 
+    position:'absolute',
+    height: "100%",
+    width: "100%",
+    top: screenHeight/3.1,
+    //right: screenWidth/7,
+    left:screenWidth/12,
+    zIndex:301
   },
   submitButton2: {
     position: "absolute",
 
     margin: "4%",
-    height: "10%",
-    width: "20%",
-    top: "65%",
+    height: "100%",
+    width: "100%",
+    top: "63%",
     left: "24.5%",
-    zIndex: 300,
+    zIndex: 302,
   },
   submitButton3: {
     position: "absolute",
 
     margin: "4%",
-    height: "10%",
-    width: "20%",
-    top: "65%",
+    height: "100%",
+    width: "100%",
+    top: "63%",
     left: "47.5%",
-    zIndex: 300,
+    zIndex: 302,
   },
   submitButtonText: {
     color: "#23395d",

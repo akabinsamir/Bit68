@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import { AppRegistry, StyleSheet, Text, View,Image,Dimensions ,TouchableOpacity} from 'react-native'
 
 import Swiper from 'react-native-swiper'
-let screenWidth=Dimensions.get('window').width;
+import * as Font from "expo-font";
+let screenWidth = Dimensions.get("window").width;
+let screenHeight = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   wrapper: {},
   slide1: {
@@ -52,28 +54,49 @@ export default class Subcategory extends React.Component {
     super(props)
 
     this.state ={
-      dataSource:[]
+      mydata:[],
+      products:null,
+      font:'normal',
   }
 }
-  componentDidMount(){
-   
-    fetch('https://cairojazzclub.com/wp-json/cjc/home/slider')
-    .then ((response) => response.json())
-    .then ((responseJson) => {
+async someFunctionInChildComponent(id){
 
-      this.setState({
-        isLoading:false,
-        dataSource:  responseJson,
-        
-        
-
-      })
-
+  
+  await fetch("http://www.tamweenymarket.com/api/subc/" +id)
+   .then((response) => response.json())
+   .then((responseJson) => {
+     this.setState({
+       products: responseJson,
       
-    })
-    .catch((error) =>{
-      console.log(error);
-    });
+     });
+   
+ 
+   });
+   console.log(this.state.products)
+   this.props.functionPropNameHere(this.state.products);
+ }
+componentDidUpdate(prevProps) {
+  if (
+    prevProps.subc !==
+    this.props.subc
+  ) {
+    this.setState({
+      mydata:this.props.subc
+  })
+
+  }
+}
+ async componentDidMount(){
+  await Font.loadAsync({
+    'main':require('./assets/fonts/Tajawal-Regular.ttf')
+  })
+
+  this.setState({font:'main'})
+    await this.setState({
+      mydata:this.props.subc
+  })
+  //console.log(this.state.mydata)
+   
 }
   render() {
   
@@ -84,220 +107,54 @@ export default class Subcategory extends React.Component {
       <Swiper  style={styles.wrapper} showsButtons={false} pagination={false} autoplay={false} autoplayTimeout={3}dot={<View style={{opacity:0}} />}
       activeDot={<View style={{opacity:0}} />}>
        
-       <View style={{position:'absolute' ,}}>
-             
-      <TouchableOpacity style={{left:10,position:'absolute',top:5}}  >
-      
-       <Image
-        source={require('./images/categories/cat1.png')} 
-         style={{
-     
-     
-         
-          height:70,
-          width:70,
-          zIndex:100,
-         }}
-       />
-       <Image
-        source={require('./images/categories/catname.png')} 
-         style={{ height:30,width:35,zIndex:100,bottom:11,left:11}}
-       />
-        
-      
-      
-     </TouchableOpacity>
-     <TouchableOpacity style={{left:80,position:'absolute'}}>
-      
-      <Image
-       source={require('./images/categories/cat2.png')} 
-        style={{
-        
-    
-      
-         height:80,
-         width:80,
-         zIndex:100,
-        }}
-      />
-        <Image
-        source={require('./images/categories/catname.png')} 
-         style={{ height:30,width:35,zIndex:100,bottom:12.5,left:20}}
-       />
-       
-     
-     
-    </TouchableOpacity>
-    <TouchableOpacity style={{left:160,position:'absolute'}}>
-      
-      <Image
-       source={require('./images/categories/cat3.png')} 
-        style={{
-       
-         height:80,
-         width:80,
-         zIndex:100,
-        }}
-      />
-        <Image
-        source={require('./images/categories/catname.png')} 
-         style={{ height:30,width:35,zIndex:100,bottom:12.5,left:20}}
-       />
-       
-     
-     
-    </TouchableOpacity>
-    <TouchableOpacity style={{left:240,position:'absolute'}} >
-      
-      <Image
-       source={require('./images/categories/cat4.png')} 
-        style={{
-      
-         height:75,
-         width:75,
-         zIndex:100,
-         }}
-      />
-        <Image
-        source={require('./images/categories/catname.png')} 
-         style={{ height:30,width:35,zIndex:100,bottom:12.5,left:20}}
-       />
-       
-     
-     
-    </TouchableOpacity>
-    <TouchableOpacity style={{left:320,position:'absolute'}} >
-      
-      <Image
-       source={require('./images/categories/cat5.png')} 
-        style={{
-  
-        
-     
-         height:75,
-         width:75,
-         zIndex:100,
-       }}
-      />
-        <Image
-        source={require('./images/categories/catname.png')} 
-         style={{ height:30,width:35,zIndex:100,bottom:12.5,left:20}}
-       />
-       
-     
-     
-    </TouchableOpacity>
-
-           </View>
-               
-           <View style={{position:'absolute' ,}}>
-             
-             <TouchableOpacity style={{left:10,position:'absolute',top:5}}  >
-             
-              <Image
-               source={require('./images/categories/cat1.png')} 
-                style={{
-            
-            
+       {this.state.mydata?(
+            this.state.mydata.map((item, s) => {
+              while (s < Math.floor((this.state.mydata.length/5)+1)) {
                 
-                 height:70,
-                 width:70,
-                 zIndex:100,
-                }}
-              />
-              <Image
-               source={require('./images/categories/catname.png')} 
-                style={{ height:30,width:35,zIndex:100,bottom:11,left:11}}
-              />
-               
-             
-             
-            </TouchableOpacity>
-            <TouchableOpacity style={{left:80,position:'absolute'}}>
-             
-             <Image
-              source={require('./images/categories/cat2.png')} 
-               style={{
-               
-           
-             
-                height:80,
-                width:80,
-                zIndex:100,
-               }}
-             />
-               <Image
-               source={require('./images/categories/catname.png')} 
-                style={{ height:30,width:35,zIndex:100,bottom:12.5,left:20}}
-              />
-              
-            
-            
-           </TouchableOpacity>
-           <TouchableOpacity style={{left:160,position:'absolute'}}>
-             
-             <Image
-              source={require('./images/categories/cat3.png')} 
-               style={{
-              
-                height:80,
-                width:80,
-                zIndex:100,
-               }}
-             />
-               <Image
-               source={require('./images/categories/catname.png')} 
-                style={{ height:30,width:35,zIndex:100,bottom:12.5,left:20}}
-              />
-              
-            
-            
-           </TouchableOpacity>
-           <TouchableOpacity style={{left:240,position:'absolute'}} >
-             
-             <Image
-              source={require('./images/categories/cat4.png')} 
-               style={{
-             
-                height:75,
-                width:75,
-                zIndex:100,
-                }}
-             />
-               <Image
-               source={require('./images/categories/catname.png')} 
-                style={{ height:30,width:35,zIndex:100,bottom:12.5,left:20}}
-              />
-              
-            
-            
-           </TouchableOpacity>
-           <TouchableOpacity style={{left:320,position:'absolute'}} >
-             
-             <Image
-              source={require('./images/categories/cat5.png')} 
-               style={{
-         
-               
-            
-                height:75,
-                width:75,
-                zIndex:100,
+                var max = s*5;
+          
+                return ( 
+        <View style={{ position: "absolute",flexDirection:'row'}}>
+
+         {this.state.mydata?(
+            this.state.mydata.slice(max,this.state.mydata.length).map((item, i) => {
+            while(i<10)
+            {
+                return ( 
+         <TouchableOpacity
+         onPress={()=>this.someFunctionInChildComponent(item._id)}
+            style={{marginVertical:-screenWidth/10}}
+          >
+            <Image
+              source={{ uri:item.subcategoryimage }}
+              style={{
+                height: screenHeight/5,
+                width: screenWidth/4.5,
+                resizeMode:'contain',
+                zIndex: 100,
               }}
-             />
-               <Image
-               source={require('./images/categories/catname.png')} 
-                style={{ height:30,width:35,zIndex:100,bottom:12.5,left:20}}
-              />
-              
+            />
+            <Text
+              style={{
+                fontSize: 10,
+                zIndex: 100,
+                fontFamily:this.state.font,
+                textAlign:'center',bottom:'30%'
+              }}
+            >
+              {item.name}
+            </Text>
             
-            
-           </TouchableOpacity>
+          </TouchableOpacity>)}})):(<View></View>)}
+        </View>
+        )}})):(<View></View>)}
+                  
+          
        
        
            
                
-                  </View>
+              
         
    
       </Swiper>

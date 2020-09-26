@@ -1,10 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, View,Image, ImageBackground ,Button,TouchableOpacity,CheckBox,SafeAreaView,ScrollView,Dimensions} from 'react-native';
 import Firstswipe from './Firstswipe';
-import { NavigationEvents } from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
-
-
+import axios from 'axios';
+import * as Font from "expo-font";
 let screenWidth = Dimensions.get("window").width;
 let screenHeight = Dimensions.get("window").height;
 
@@ -15,16 +14,14 @@ var { width } = Dimensions.get("window")
      
      title:'طلباتي',
     
-     drawerIcon: <Image source={require('./images/beekoo115.png')} style={{height:0.5,width:560,top:'52%',position:'absolute'}} />,
-     labelStyle:{
-      fontWeight:'normal',
-      //fontFamily:'FORMAL'
-    }
-    
-
-   
-
-
+     drawerIcon: (
+      <View style={{bottom:'28%'}}>
+      <Image
+        source={require("./images/cart.png")}
+        style={{ height:30, width: 30, position: "absolute" ,resizeMode:'contain'}}
+      />
+      </View>
+    ),
   };
  
   
@@ -43,8 +40,10 @@ var { width } = Dimensions.get("window")
       dataCart:[],
       totalprice:0,
       totalitems:0,
-      
+      orderid:null,
       data:"",
+      username:null,
+      font:'normal',
      
    }
   }
@@ -60,7 +59,8 @@ var { width } = Dimensions.get("window")
     ) {
       this.setState({
         totalitems:0,
-        totalprice:0
+        totalprice:0,
+      
       })
      await AsyncStorage.getItem('cart').then((cart)=>{
         //console.log(this.state.totalprice)
@@ -84,16 +84,26 @@ var { width } = Dimensions.get("window")
     
 
     }
+   
     
   
   }
 
   async componentDidMount() {
-    this.setState({
-      totalitems:0,
-      totalprice:0
-    })
+    //console.log(this.props.navigation.state.params.username)
+
     
+   await Font.loadAsync({
+    'main':require('./assets/fonts/Tajawal-Regular.ttf')
+  })
+
+  this.setState({font:'main'})
+ await this.setState({
+      totalitems:0,
+      totalprice:0,
+      username:this.props.navigation.state.params.username,
+    })
+   // console.log(this.state.username)
   await  AsyncStorage.getItem('cart').then((cart)=>{
       //console.log(this.state.totalprice)
       if (cart !== null) {
@@ -114,7 +124,7 @@ var { width } = Dimensions.get("window")
       this.setState({totalprice:this.state.totalprice + (this.state.dataCart[i].quantity*this.state.dataCart[i].price)})
       this.setState({totalitems:this.state.totalitems + this.state.dataCart[i].quantity})
     }
-    console.log(this.state.totalprice)
+   // console.log(this.state.totalprice)
     
   }
       
@@ -166,7 +176,7 @@ var { width } = Dimensions.get("window")
         })
        
         
-         console.log(this.state.totalprice)
+         //console.log(this.state.totalprice)
         
         }
         else if (type==false&&cantd>=2){
@@ -202,7 +212,7 @@ var { width } = Dimensions.get("window")
         .catch((err)=>{
           alert(err)
         })
-        console.log(this.state.totalprice)
+        //console.log(this.state.totalprice)
         }
         else if (type==false&&cantd==1){
          dataCar.splice(i,1)
@@ -261,7 +271,7 @@ var { width } = Dimensions.get("window")
             
          
           
-            <ImageBackground source={require('./images/mrwhite.jpg')} style={{width:'100%', height:'100%',flex:1}}>
+            <ImageBackground source={require('./images/mrwhite.jpg')} style={{width:'100%', height:'100%',flex:1, zIndex: 0}}>
            
               <View style={styles.header}>
               <Image source={require('./images/headertamween.png')} style={styles.headerphoto} />
@@ -272,18 +282,93 @@ var { width } = Dimensions.get("window")
 
               <View style={styles.footerprice}>
               <Image source={require('./images/cartfooter.png')} style={styles.footerphoto} />
-
+            
+              </View>
+              <View style={{flex:1,
+                    zIndex:499,
+                    width:'100%',
+                    height:'19.5%',
+                    bottom:'1%',
+                    right:'10%',
+                    position:'absolute'}}>
+              <Text style={{color:'white',fontFamily:this.state.font}}>المبلغ الاجمالي</Text>
+              <Text style={{color:'white',fontSize:15,position:'absolute',left:'85%',top:'12%',textAlign:'center',fontFamily:this.state.font}}>{this.state.totalprice} EGP</Text>
+            
+              </View>
+              <View style={{flex:1,
+                    zIndex:499,
+                    width:'100%',
+                    height:'19.5%',
+                    bottom:'1%',
+                    right:'42%',
+                    position:'absolute'}}>
+              <Text style={{color:'white',fontFamily:this.state.font}}>رسوم التوصيل</Text>
+              <Text style={{color:'white',fontSize:15,position:'absolute',left:'85%',top:'12%',textAlign:'center',fontFamily:this.state.font}}>10 EGP</Text>
+            
+              </View>
+              <View style={{flex:1,
+                    zIndex:499,
+                    width:'100%',
+                    height:'19.5%',
+                    bottom:'1%',
+                    right:'80%',
+                    position:'absolute'}}>
+              <Text style={{color:'white',fontFamily:this.state.font}}>المجموع</Text>
+              <Text style={{color:'white',fontSize:15,position:'absolute',left:'87%',top:'12%',textAlign:'center',fontFamily:this.state.font}}>{this.state.totalprice+10} EGP</Text>
+            
               </View>
               <View style={styles.confirm}>
                     <TouchableOpacity
                      onPress={() => {
-                      {/*} this.numberCarousel.scrollToIndex(index);*/}
-                      //this.state.modaldate=this.state.mydata[index].startDate
-                      //this.state.eventid = this.state.mydata[index].id
-                      this.props.navigation.navigate('Reciept')
-                      AsyncStorage.clear();
-                  
-                     }} style={{zIndex:1002}}>
+                      const that = this;
+                      AsyncStorage.getItem('cart').then((cart)=>{
+                          const cartfood = JSON.parse(cart)
+                          if(this.state.username!=null){
+                              axios.post('http://www.tamweenymarket.com/api/orders/create', {
+                                  user:this.state.username,
+                                  cart:cartfood,
+                                  address:"4,mekka street, el nozha el gdeda ,Cairo,Egypt",
+                                  totalprice:this.state.totalprice,
+                                  paymentinfo:"CASH",
+                                  deliveryfees:"10",
+                                  delivered:false,
+                                  
+                                })
+                                .then(function (response) {
+                                 
+                                  if(response.data.message)
+                                  {
+                                      alert(response.data.message)
+                                      console.log(response.data.message)
+                                  }
+                                else{
+                                  alert('Order is on the count down :)');
+                                  
+                                  //console.log(response.data._id)
+                                if(response.data._id != null)
+                                {
+                                
+                                that.props.navigation.navigate("Reciept",{
+                                  orderid:response.data._id,
+                                  //user:this.state.username
+                                  
+                                });
+                                
+                              }
+                                  
+                                }
+                                })
+                                .catch(function (error) {
+                                  console.log(error);
+                                  alert('please check your internet connection!');
+                                });
+                                
+                              }
+                      })
+                      .catch((err)=>{
+                        alert(err)
+                      })
+                    }} style={{zIndex:1002}}>
                         <Image source={require('./images/confirmbutton.png')} style={{width:400,height:60}}/>
                     </TouchableOpacity> 
 
@@ -301,7 +386,7 @@ var { width } = Dimensions.get("window")
             <View style={styles.cart}>
                     <TouchableOpacity style={{alignItems:'flex-end',margin:16,top:'35%',zIndex:1002}}>
                         <Image source={require('./images/cartnumber.png')} style={{width:32,height:30}}/>
-                    <Text style={{bottom:'50%',right:'40%'}}>{this.state.totalitems}</Text>
+                    <Text style={{bottom:'50%',right:'40%',fontFamily:this.state.font}}>{this.state.totalitems}</Text>
                     </TouchableOpacity> 
 
             </View>
@@ -320,7 +405,7 @@ var { width } = Dimensions.get("window")
        
             <View style={{position:'absolute',top:'5.5%',left:'22%',zIndex:1001}}>
 
-            <Text style={{width:180,height:33,fontFamily:'normal',zIndex:500,color:'white',fontSize:18}}>عربة المشتريات</Text>
+            <Text style={{width:180,height:33,fontFamily:this.state.font,zIndex:500,color:'white',fontSize:18}}>عربة المشتريات</Text>
     
               
           </View>
@@ -337,27 +422,27 @@ var { width } = Dimensions.get("window")
         <View style={{alignItems: 'center', justifyContent: 'center',height:550,bottom:'20%'}}>
          <View style={{flex:1}}>
 
-           <ScrollView style={{zIndex:10,height:800}}>
+           <ScrollView style={{zIndex:300,height:800,}}>
 
              {
                this.state.dataCart.map((item,i)=>{
                  return(
-                   <View style={{width:width-20,margin:10,backgroundColor:'transparent', flexDirection:'row', borderBottomWidth:2, borderColor:"#cccccc", paddingBottom:10}}>
+                   <View  style={{width:width-20,margin:10,backgroundColor:'transparent', flexDirection:'row', borderBottomWidth:2, borderColor:"#cccccc", paddingBottom:10}}>
                      <Image  style={{width:width/3,height:width/3,resizeMode:'contain'}} source={{uri: item.productimage}} />
                      <View style={{flex:1, backgroundColor:'trangraysparent', padding:10, justifyContent:"space-between"}}>
                        <View>
-                         <Text style={{fontWeight:"bold", fontSize:20}}>{item.productname}</Text>
-                         <Text>1 kilo</Text>
+                         <Text style={{fontFamily:this.state.font, fontSize:20}}>{item.productname}</Text>
+                         <Text style={{fontFamily:this.state.font}}>{item.productsize}</Text>
                        </View>
                        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                         <Text style={{fontWeight:'bold',color:"#33c37d",fontSize:20}}>${item.price*item.quantity}</Text>
+                         <Text style={{fontFamily:this.state.font,color:"#33c37d",fontSize:20}}>${item.price*item.quantity}</Text>
                          <View style={{flexDirection:'row', alignItems:'center'}}>
                            <TouchableOpacity onPress={()=>this.onChangeQual(i,false)}>
                            <Image source={require('./images/minceicon.png')} 
             style={{width:35,height:35}}
             />
                            </TouchableOpacity>
-                           <Text style={{paddingHorizontal:8, fontWeight:'bold', fontSize:18}}>{item.quantity}</Text>
+                           <Text style={{paddingHorizontal:8, fontFamily:this.state.font, fontSize:18}}>{item.quantity}</Text>
                            <TouchableOpacity onPress={()=>this.onChangeQual(i,true)}>
                            <Image source={require('./images/plusicon.png')} 
             style={{width:35,height:35}}
@@ -413,12 +498,12 @@ const styles = StyleSheet.create({
     header: {
       flex:1,
    
-      width:'100%',
-      height:'0%',
-      
-      bottom:'102%',
+      width:screenWidth,
+      height:screenHeight/50,
+      bottom:'100%',
       zIndex:1000,
       position:'absolute',
+
 
   },
   headerphoto:{

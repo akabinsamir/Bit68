@@ -11,12 +11,15 @@ import {
   Dimensions,
 } from "react-native";
 import Modal from "react-native-modal"; // 2.4.0
+import { AntDesign } from '@expo/vector-icons';
 import SearchInput, { createFilter } from "react-native-search-filter";
 import Eventscrollnew from "./Eventscrollnew";
 import Firstswipe from "./Firstswipe";
 import Subcategory from "./Subcategory";
 import Brands from "./Brands";
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from "@react-native-community/async-storage";
+import * as Font from "expo-font";
+
 const KEYS_TO_FILTERS = ["productName"];
 
 let screenWidth = Dimensions.get("window").width;
@@ -24,17 +27,20 @@ let screenHeight = Dimensions.get("window").height;
 
 class Products extends React.Component {
   static navigationOptions = {
-    title: 'المنتجات',
+    title: "المنتجات",
     drawerIcon: (
-      <Image
-        source={require("./images/beekoo115.png")}
-        style={{ height: 0.5, width: 560, top: "52%", position: "absolute" }}
-      />
+      <View style={{ bottom: "28%" }}>
+        <Image
+          source={require("./images/products.png")}
+          style={{
+            height: 30,
+            width: 30,
+            position: "absolute",
+            resizeMode: "contain",
+          }}
+        />
+      </View>
     ),
-    labelStyle: {
-      fontWeight: "normal",
-      //fontFamily:'FORMAL'
-    },
   };
 
   constructor() {
@@ -48,28 +54,47 @@ class Products extends React.Component {
       mydata: null,
       searchTerm: "",
       filteredMydata: null,
-      isTrue :true,
+      isTrue: true,
+      mycatName: null,
+      mybrands: null,
+      subc: null,
+      mycategories: null,
+      mycatdata:null,
+      font:'normal',
     };
   }
+
   searchUpdated(term) {
     this.setState({ searchTerm: term });
-    if(term.length == 0)
-    {
+    if (term.length == 0) {
       this.setState({
         filteredMydata: this.state.mydata,
-      
       });
-    }
-    else{
-    const filteredProducts = this.state.mydata.filter(
-      createFilter(this.state.searchTerm, KEYS_TO_FILTERS)
-    );
+    } else {
+      const filteredProducts = this.state.mydata.filter(
+        createFilter(term, KEYS_TO_FILTERS)
+      );
 
+      if (filteredProducts.length != 2) {
+        this.setState({
+          filteredMydata: filteredProducts,
+        });
+      } else {
+        this.setState({
+          filteredMydata: this.state.mydata,
+        });
+      }
+    }
+  }
+  brandupdate(x) {
     this.setState({
-      filteredMydata: filteredProducts,
-    
+      filteredMydata: x,
     });
   }
+  subcupdate(x) {
+    this.setState({
+      filteredMydata: x,
+    });
   }
   componentDidUpdate(prevProps, prevState) {
     if (
@@ -78,34 +103,96 @@ class Products extends React.Component {
     ) {
       this.setState({
         mydata: null,
+        mycatName: null,
       });
       const { navigation } = this.props;
       const { link } = navigation.state.params;
+      const { cat } = navigation.state.params;
 
-      fetch("http://192.168.43.201:3000/api/categories/" + link)
+      fetch("http://www.tamweenymarket.com/api/categories/" + link)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          this.setState({
+            mydata: responseJson,
+            mycatName: cat,
+          });
+          fetch(
+            "http://www.tamweenymarket.com/api/categories/" + link + "/brands"
+          )
+            .then((response) => response.json())
+            .then((responseJson) => {
+              this.setState({
+                mybrands: responseJson,
+              });
+              fetch(
+                "http://www.tamweenymarket.com/api/categories/" + link + "/subc"
+              )
+                .then((response) => response.json())
+                .then((responseJson) => {
+                  this.setState({
+                    subc: responseJson,
+                  });
+                  fetch("http://www.tamweenymarket.com/api/categories/")
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                      this.setState({
+                        mycategories: responseJson,
+                      });
+                    });
+                });
+            });
+        });
+    }
+  }
+  async componentDidMount() {
+   
+    await Font.loadAsync({
+      'main':require('./assets/fonts/Tajawal-Regular.ttf')
+    })
+
+    this.setState({font:'main'})
+
+    const { navigation } = this.props;
+    if (!navigation.state.params) {
+      const link = "5f4fbc57782b7f1c0ceab1f0";
+    } else if (navigation.state.params.link != null) {
+      const { navigation } = this.props;
+      const { link } = navigation.state.params;
+      const { cat } = navigation.state.params;
+
+      this.setState({
+        mycatName: cat,
+      });
+
+      fetch("http://www.tamweenymarket.com/api/categories/" + link)
         .then((response) => response.json())
         .then((responseJson) => {
           this.setState({
             mydata: responseJson,
           });
         });
-    }
-  }
-  componentDidMount() {
-    /*const { navigation } = this.props;  
-    const { link } = navigation.state.params;
-    console.log(link);*/
-
-    const { navigation } = this.props;
-    const { link } = navigation.state.params;
-
-    fetch("http://192.168.43.201:3000/api/categories/" + link)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        this.setState({
-          mydata: responseJson,
+      fetch("http://www.tamweenymarket.com/api/categories/" + link + "/brands")
+        .then((response) => response.json())
+        .then((responseJson) => {
+          this.setState({
+            mybrands: responseJson,
+          });
         });
-      });
+      fetch("http://www.tamweenymarket.com/api/categories/" + link + "/subc")
+        .then((response) => response.json())
+        .then((responseJson) => {
+          this.setState({
+            subc: responseJson,
+          });
+        });
+      fetch("http://www.tamweenymarket.com/api/categories/")
+        .then((response) => response.json())
+        .then((responseJson) => {
+          this.setState({
+            mycategories: responseJson,
+          });
+        });
+    }
   }
 
   /* toggleSwitch = (value) => {
@@ -116,15 +203,79 @@ class Products extends React.Component {
       }*/
   _renderModalContent = () => (
     <View style={styles.modalContent}>
-      <Image
-        source={require("./images/catmenucrop.jpg")}
+      <ScrollView
         style={{
+          position: "absolute",
           width: "100%",
-          height: "100%",
-          resizeMode: "contain",
-          position: "relative",
+          height: screenHeight / 2.4,
+          zIndex: 40000,
+          left: "5%",
         }}
-      />
+      >
+        <View style={{ right: "5%" }}>
+          <View style={{ position: "absolute", left: "10%" }}>
+            {this.state.mycategories ? (
+              this.state.mycategories.map((item, i) => {
+                while (i >= this.state.mycategories.length / 2) {
+                  return (
+                    <Text
+                    onPress={async() => {
+                      //on clicking we are going to open the URL using Linking
+                     await fetch("http://www.tamweenymarket.com/api/categories/" + item._id)
+                      .then((response) => response.json())
+                      .then((responseJson) => {
+                        this.setState({
+                          mycatdata: responseJson,
+                          mycatName:item.name
+                        });
+                        console.log(responseJson)
+                        this.setState({visibleModal:null})
+                      });
+                    }}
+                    style={(item.name==this.state.mycatName) ? styles.catTextright2 : styles.catTextright}
+                    >
+                      {item.name}
+                    </Text>
+                  );
+                }
+              })
+            ) : (
+              <View></View>
+            )}
+          </View>
+          <View>
+            {this.state.mycategories ? (
+              this.state.mycategories.map((item, i) => {
+                while (i < this.state.mycategories.length / 2) {
+                  return (
+                    <Text
+                    onPress={async() => {
+                      //on clicking we are going to open the URL using Linking
+                     await fetch("http://www.tamweenymarket.com/api/categories/" + item._id)
+                      .then((response) => response.json())
+                      .then((responseJson) => {
+                        this.setState({
+                          mycatdata: responseJson,
+                          mycatName:item.name
+                        });
+
+                        console.log(responseJson)
+                        this.setState({visibleModal:null})
+                      });
+                    }}
+                      style={(item.name==this.state.mycatName) ? styles.catTextleft2 : styles.catTextleft}
+                    >
+                      {item.name}
+                    </Text>
+                  );
+                }
+              })
+            ) : (
+              <View></View>
+            )}
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 
@@ -142,7 +293,7 @@ class Products extends React.Component {
     return (
       <ImageBackground
         source={require("./images/mrwhite.jpg")}
-        style={{ width: "100%", height: "100%", flex: 1 }}
+        style={{ width: "100%", height: "100%", flex: 1, zIndex: 0 }}
       >
         {/*  <NavigationEvents
                 onDidFocus={this.myfunction()}
@@ -160,12 +311,12 @@ class Products extends React.Component {
           />
         </View>
 
-        <View style={styles.footerprice}>
+        {/*} <View style={styles.footerprice}>
           <Image
             source={require("./images/footerpricebg.png")}
             style={styles.footerphoto}
           />
-        </View>
+            </View>*/}
 
         <View style={styles.menu}>
           <SafeAreaView>
@@ -174,7 +325,7 @@ class Products extends React.Component {
                 alignItems: "flex-end",
                 margin: 16,
                 top: "40%",
-                zIndex: 500,
+                zIndex: 500000,
               }}
               onPress={this.props.navigation.openDrawer}
             >
@@ -188,19 +339,19 @@ class Products extends React.Component {
         <View style={styles.cart}>
           <TouchableOpacity
             onPress={() => {
-              AsyncStorage.getItem('cart').then((cart)=>{
-                //console.log(this.state.totalprice)
-                
+              AsyncStorage.getItem("cart")
+                .then((cart) => {
+                  //console.log(this.state.totalprice)
+
                   // We have data!!
-                  const cartfood = JSON.parse(cart)
-                  this.props.navigation.navigate("Cart",{
-                    cart:cartfood
+                  const cartfood = JSON.parse(cart);
+                  this.props.navigation.navigate("Cart", {
+                    cart: cartfood,
                   });
-               
-              })
-              .catch((err)=>{
-                alert(err)
-              })
+                })
+                .catch((err) => {
+                  alert(err);
+                });
             }}
             style={{
               alignItems: "flex-end",
@@ -225,11 +376,12 @@ class Products extends React.Component {
               bottom: "2%",
               left: "15%",
               textAlign: "center",
-              fontFamily: "normal",
+              fontFamily: this.state.font,
               color: "gray",
+              
 
               fontSize: 20,
-              zIndex: 500,
+              zIndex: 5001,
             }}
             underlineColorAndroid="transparent"
             placeholder="ابحث عن منتج"
@@ -255,12 +407,19 @@ class Products extends React.Component {
               //this.state.eventid = this.state.mydata[index].id
               this.setState({ visibleModal: 2 });
             }}
-            style={{ alignItems: "flex-end", margin: 16, zIndex: 500 }}
+            style={{ margin: 16, zIndex: 500 }}
           >
-            <Image
-              source={require("./images/submenubutton.png")}
-              style={{ width: 100, height: 25 }}
-            />
+            <Text
+              style={{
+                color: "#80fc38",
+                fontSize: 20,
+                textAlign: "center",
+                fontFamily: this.state.font,
+              }}
+            >
+              {this.state.mycatName} 
+            </Text>
+            <AntDesign style={{top:"35%",position:'absolute', zIndex:500,left:'40%'}} name="caretdown" size={10} color="#80fc38" />
           </TouchableOpacity>
         </View>
 
@@ -287,19 +446,27 @@ class Products extends React.Component {
             />
             {/*Text to show the text according to switch condition*/}
           </View>
-          <View
-            style={{
-              position: "absolute",
-              bottom: "52.5%",
-              height: 300,
-              width: 500,
-              zIndex: 1000,
-              left: "0.5%",
-            }}
-          >
-            <Subcategory />
-          </View>
-          {this.state.filteredMydata? (
+          {this.state.subc ? (
+            <View
+              style={{
+                position: "absolute",
+                bottom: "74%",
+                height: screenHeight/10,
+                width: screenWidth,
+                zIndex: 1000,
+                left: "5%",
+              }}
+            >
+              <Subcategory
+                functionPropNameHere={this.subcupdate.bind(this)}
+                subc={this.state.subc}
+                navigation={this.props.navigation}
+              />
+            </View>
+          ) : (
+            <View></View>
+          )}
+          {this.state.filteredMydata ? (
             <View
               style={{
                 position: "absolute",
@@ -319,7 +486,29 @@ class Products extends React.Component {
             <View></View>
           )}
 
-          {this.state.mydata!=null && this.state.filteredMydata == null? (
+
+{this.state.mycatdata ? (
+            <View
+              style={{
+                position: "absolute",
+                bottom: "25.5%",
+                height: 850,
+                width: 600,
+                zIndex: 500,
+                left: "0.5%",
+              }}
+            >
+              <Eventscrollnew
+                products={this.state.mycatdata}
+                navigation={this.props.navigation}
+              />
+            </View>
+          ) : (
+            <View></View>
+          )}
+          
+
+          {this.state.mydata != null && this.state.filteredMydata == null ? (
             <View
               style={{
                 position: "absolute",
@@ -373,18 +562,26 @@ class Products extends React.Component {
             />
           </View>
 
-          <View
-            style={{
-              position: "absolute",
-              bottom: "53%",
-              height: 100,
-              width: 500,
-              zIndex: 1000,
-              left: "0.5%",
-            }}
-          >
-            <Brands />
-          </View>
+          {this.state.mybrands ? (
+            <View
+              style={{
+                position: "absolute",
+                bottom: "55%",
+                height: '10%',
+                width: 500,
+                zIndex: 1000,
+                left: "0.5%",
+              }}
+            >
+              <Brands
+                brands={this.state.mybrands}
+                functionPropNameHere={this.brandupdate.bind(this)}
+                navigation={this.props.navigation}
+              />
+            </View>
+          ) : (
+            <View></View>
+          )}
         </ScrollView>
         <Modal
           style={styles.bottomModal}
@@ -410,32 +607,33 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   header: {
-    flex: 1,
-
-    width: "100%",
-    height: "2%",
-    bottom: "100%",
-    zIndex: 1000,
+    zIndex: 5000,
+    width: screenWidth,
+    height: screenHeight / 9,
+    top: "0%",
+    alignItems: "center",
     position: "absolute",
   },
   headerphoto: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    resizeMode: "stretch",
-    zIndex: 1000,
-    paddingTop: "25%",
-    width: "100%",
-    height: "0%",
+    resizeMode: "contain",
   },
   footer: {
-    flex:1,
-    zIndex:500,
-    width:screenWidth,
-    height:screenHeight/10.5,
-    bottom:'0%',
- 
-    position:'absolute',
+    alignItems: "center",
+    zIndex: 5000,
+    width: screenWidth,
+    height: screenHeight / 10.5,
+    bottom: "0%",
+    position: "absolute",
+  },
+  footerphoto: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+
+    resizeMode: "contain",
   },
   footerprice: {
     flex: 1,
@@ -446,14 +644,7 @@ const styles = StyleSheet.create({
 
     position: "absolute",
   },
-  footerphoto: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
 
-    width: "100%",
-    height: "0%",
-  },
   textmenu: {
     color: "#541e1b",
     fontSize: 20,
@@ -471,29 +662,28 @@ const styles = StyleSheet.create({
     zIndex: 3,
   },
   menu: {
-    zIndex: 1001,
+    zIndex: 500000,
     position: "absolute",
   },
   cart: {
-    zIndex: 1001,
+    zIndex: 5002,
     position: "absolute",
     left: "82%",
   },
   headerbutton1: {
-    zIndex: 1001,
+    zIndex: 5001,
     position: "absolute",
     left: "19%",
     top: "7%",
   },
   headerbuttoncat: {
-    zIndex: 1001,
+    zIndex: 5001,
     position: "absolute",
-    left: "17%",
     top: "2.5%",
-    width: 200,
+    width: screenWidth,
   },
   headerbutton2: {
-    zIndex: 1001,
+    zIndex: 5001,
     position: "absolute",
     left: "20%",
     top: "3.8%",
@@ -600,5 +790,42 @@ const styles = StyleSheet.create({
   bottomModal: {
     justifyContent: "flex-end",
     margin: 0,
+  },
+  catTextleft:
+  {
+    fontSize: 25,
+    padding: 15,
+    borderBottomWidth: 1,
+    color:'gray',
+    borderColor: "gray",
+    marginLeft: "58%",
+    
+  },
+  catTextleft2:
+  {
+    fontSize: 25,
+    padding: 15,
+    borderBottomWidth: 1,
+    color:'#80fc38',
+    borderColor: "#80fc38",
+    marginLeft: "58%",
+  },
+  catTextright:
+  {
+    fontSize: 25,
+    padding: 15,
+    borderBottomWidth: 1,
+    color:'gray',
+    borderColor: "gray",
+    marginRight: "58%",
+  },
+  catTextright2:
+  {
+    fontSize: 25,
+    padding: 15,
+    borderBottomWidth: 1,
+    color:'#80fc38',
+    borderColor: "#80fc38",
+    marginRight: "58%",
   },
 });

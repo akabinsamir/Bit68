@@ -4,23 +4,34 @@
     "slug": "Tamweeny",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/tamweeny.png",
+  
+    
+    
+
+    "facebookAppId":"3636195366400231",
+    "facebookDisplayName":"Tamweeny", 
+    "platforms":["android","ios"],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
+
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
+ 
+    "android": {
+      "package": "com.abdelrahman77.Tamweeny",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCKFImBVI91NAIzI-IHt4LJUhjFJw7DzfQ"
+        }
+      }
     }
   }
 }
