@@ -12,24 +12,25 @@ import {
   Animated,
   Easing
 } from "react-native";
-import { YellowBox } from 'react-native';
+import {  LogBox } from 'react-native';
 import Eventscrollnew from "./Eventscrollnew";
 import Firstswipe from "./Firstswipe";
 import Categories from "./Categories";
 import SearchInput, { createFilter } from "react-native-search-filter";
 import AsyncStorage from "@react-native-community/async-storage";
 import SearchableDropDown from 'react-native-dropdown-searchable';
+
 import * as Font from "expo-font";
 
 
-const KEYS_TO_FILTERS = ["productName"];
+const KEYS_TO_FILTERS = ["name"];
 
 let screenWidth = Dimensions.get("window").width;
 let screenHeight = Dimensions.get("window").height;
 
-export default class Home extends React.Component {
+export default class Bithome extends React.Component {
   static navigationOptions = {
-    title: "الرئيسية",
+    title: "Home",
 
     drawerIcon: (
       <View style={{bottom:'28%'}}>
@@ -44,7 +45,6 @@ export default class Home extends React.Component {
 
   constructor() {
     super();
-    this.spinValue = new Animated.Value(0)
     this.state = {
       finalname: null,
       counter: 0,
@@ -56,11 +56,8 @@ export default class Home extends React.Component {
       tag:null,
       searchTerm: "",
       filteredMydata: null,
-      isTrue :true,
-      username:null,
       font:'normal',
-      long:null,
-      lat:null
+    
     
     }
     
@@ -103,95 +100,47 @@ if(filteredProducts.length != 2)
   }
 
   }
-  spin () {
-    this.spinValue.setValue(0)
-    Animated.timing(
-      this.spinValue,
-      {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver:false,
-        easing: Easing.linear,
-        
-      }
-    ).start()
-    //this.spinValue.setValue(1)
-  }
  async componentDidMount() {
-  await Font.loadAsync({
+  /*await Font.loadAsync({
     'main':require('./assets/fonts/Tajawal-Regular.ttf')
-  })
+  })*/
 
-  this.setState({font:'main'})
-    
-   await this.setState({
-      username:this.props.navigation.state.params.username,
- 
-    })
-    console.log(this.state.username)
-    YellowBox.ignoreWarnings(['Animated: `useNativeDriver`']);
-   // this.spin()
-    
-    fetch("http://www.tamweenymarket.com/api/products")
+   await fetch("https://5bcce576cf2e850013874767.mockapi.io/task/categories")
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
           mydata: responseJson,
         });
+        
       });
-      fetch("http://www.tamweenymarket.com/api/brands")
-      .then((response) => response.json())
-      .then((responseJson) => {
-        this.setState({
-          list: responseJson,
-        });
-      });
-    AsyncStorage.clear();
+    AsyncStorage.clear();//clearing storage , wasy for testing
   }
 
   
 
   render() {
     const { navigation } = this.props;
-    //const username = "batates";
-    //const partname = username.split(" ")[0];
-    const spin = this.spinValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [120, 1]
-    })
-
+ 
     return (
       <ImageBackground
         source={require("./images/mrwhite.jpg")}
         style={{ width: "100%", height: "100%", flex: 1,zIndex:0 }}
       >
-        <View style={styles.header}>
-          <Image
-            source={require("./images/headertamween.png")}
-            style={styles.headerphoto}
-          />
-        </View>
-        <View style={styles.footer}>
-          <Image
-            source={require("./images/footertamween.png")}
-            style={styles.footerphoto}
-          />
-        </View>
 
         <View style={styles.menu}>
           <SafeAreaView>
             <TouchableOpacity
               style={{
                 alignItems: "flex-end",
-                margin: 16,
-                top: "40%",
+                //margin: 16,
+                //top: "30%",
                 zIndex: 500,
               }}
               onPress={this.props.navigation.openDrawer}
             >
               <Image
-                source={require("./images/menutamween.png")}
-                style={{ width: 30, height: 30 }}
+                source={require("./images/bitmenu.png")}
+                style={{ width: screenWidth/13, height: screenWidth/10 ,resizeMode:'contain'}}
               />
             </TouchableOpacity>
           </SafeAreaView>
@@ -216,33 +165,21 @@ if(filteredProducts.length != 2)
                 });
             }}
             style={{
-              alignItems: "flex-end",
-              margin: 16,
-              top: "30%",
+       
               zIndex: 500,
             }}
           >
             <Image
-              source={require("./images/carttamween.png")}
-              style={{ width: 40, height: 40 }}
+              source={require("./images/bitcart.png")}
+              style={{ width: screenWidth/2 ,height:screenHeight/27,resizeMode:'contain' ,}}
             />
           </TouchableOpacity>
         </View>
-        <View style={styles.headerbutton1}>
-          <TouchableOpacity
-            style={{ alignItems: "flex-end", margin: 16, zIndex: 500 }}
-          >
-            <Image
-              source={require("./images/headerbutton1.png")}
-              style={{ width: 200, height: 45,tintColor:'white' ,resizeMode:'contain'}}
-            />
-          </TouchableOpacity>
-     
-            {/*style={{bottom:'50%',zIndex:1002,textAlign: "center",}}*/}
+        <View style={styles.headerbutton1}>    
             <SearchInput
-            style={{bottom:screenHeight/15,zIndex:1002,textAlign: "center",fontFamily:this.state.font}}
+            style={{zIndex:10100,textAlign: "center",fontFamily:this.state.font}}
             underlineColorAndroid="transparent"
-            placeholder="ابحث عن منتج"
+            placeholder="look for a category"
             placeholderTextColor="gray"
             autoCapitalize="none"
             onChangeText={(term) => {
@@ -290,146 +227,27 @@ if(filteredProducts.length != 2)
         :
         (<View></View>)}
         </View>
-        <ScrollView style={{ width: screenWidth, height: screenHeight, zIndex: 0 }}>
-          <View style={styles.container}>
-            {/*<Image source={require('./images/cairojazz.png')} style={styles.logo} />*/}
-          </View>
+        <ScrollView style={{ width: screenWidth, height: screenHeight, zIndex: 0 , top :'5%'}}>
 
-          <View style={{ flex: 1, bottom: "20%", height: "10%" }}>
+          <View style={{ flex: 1, bottom: "20%" }}>
             <Firstswipe />
           </View>
 
+       
           <View
             style={{
               position: "absolute",
-              top: "29.5%",
-              left: "73%",
-              zIndex: 100,
-            }}
-          >
-            <Image
-              source={require("./images/arabicTASNEFAAT.png")}
-              style={{ width: screenWidth / 4, height: screenHeight / 25 }}
-            />
-          </View>
-          <View
-            style={{
-              position: "absolute",
-              bottom: "37%",
-              height: screenHeight / 3,
+              bottom: "7%",
+              height: screenHeight / 2,
               width: screenWidth,
               zIndex: 1001,
-              left: "8%",
+              left: "7%",
             }}
           >
-            <Categories navigation={this.props.navigation} />
+            <Categories navigation={this.props.navigation} mydata={this.state.filteredMydata} />
           </View>
 
-          {this.state.filteredMydata ? (
-            <View
-              style={{
-                position: "absolute",
-                top: "7.5%",
-                height: 850,
-                width: 600,
-                zIndex: 500,
-                left: "0.5%",
-              }}
-            >
-              <Eventscrollnew
-               // onRef={ref => (this.parentReference = ref)}
-               // parentReference = {this.parentMethod.bind(this)}
-                products={this.state.filteredMydata}
-                navigation={this.props.navigation}
-              />
-            </View>
-          ) : (
-            <View></View>
-          )}
-           {this.state.mydata!=null && this.state.filteredMydata == null? (
-            <View
-              style={{
-                position: "absolute",
-                top: "7.5%",
-                height: 850,
-                width: 600,
-                zIndex: 999,
-                left: "0.5%",
-              }}
-            >
-              <Eventscrollnew
-              //onRef={ref => (this.parentReference = ref)}
-              //parentReference = {this.parentMethod.bind(this)}
-                products={this.state.mydata}
-                navigation={this.props.navigation}
-              />
-            </View>
-          ) : (
-            <View></View>
-          )}
-          <View style={{ position: "absolute", bottom: "49%", zIndex: 2 }}>
-            <Image
-              source={require("./images/graybg.png")}
-              style={{ width: screenWidth, height: screenHeight / 4.5 }}
-            />
-          </View>
-
-          <TouchableOpacity
-            style={{
-              position: "absolute",
-              margin: 16,
-              top: "50%",
-              left: "17%",
-              zIndex: 1001,
-            }}
-          >
-            <Image
-              source={require("./images/yellowbutton.png")}
-              style={{ width: 120, height: 57 }}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              position: "absolute",
-              margin: 16,
-              top: "50%",
-              left: "47%",
-              zIndex: 1001,
-            }}
-          >
-            <Image
-              source={require("./images/redbutton.png")}
-              style={{ width: 120, height: 57 }}
-            />
-          </TouchableOpacity>
-
-          <View style={{ position: "absolute", bottom: "16%", zIndex: 200 }}>
-            <Image
-              source={require("./images/graybg.png")}
-              style={{ width: 420, height: 260 }}
-            />
-          </View>
-
-          <View style={{ bottom: "17%", zIndex: 200 }}>
-            <Image
-              source={require("./images/shelf2.png")}
-              style={{ width: 412, height: 200 }}
-            />
-          </View>
-
-          <View
-            style={{
-              position: "absolute",
-              bottom: "39%",
-              zIndex: 201,
-              left: "69%",
-            }}
-          >
-            <Image
-              source={require("./images/specialproducts.png")}
-              style={{ width: 115, height: 33 }}
-            />
-          </View>
+         
         </ScrollView>
       
       </ImageBackground>
@@ -452,33 +270,15 @@ const styles = StyleSheet.create({
     top: "0%",
     alignItems:'center',
     position: "absolute",
+    
   },
   headerphoto: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    resizeMode:'contain'
+    resizeMode:'stretch'
+    
    
-  },
-  footer: {
-    alignItems:'center',
-    zIndex: 5000,
-    width: screenWidth,
-    height: screenHeight / 10.5,
-    bottom: "0%",
-    position: "absolute",
-  },
-  footerphoto: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-
-    resizeMode:'contain'
-  },
-  textmenu: {
-    color: "#541e1b",
-    fontSize: 20,
-    fontWeight: "500",
   },
   logo: {
     alignItems: "center",
@@ -494,17 +294,20 @@ const styles = StyleSheet.create({
   menu: {
     zIndex: 100000,
     position: "absolute",
+    top:'10%',
+    left:'5%'
   },
   cart: {
     zIndex: 5000,
     position: "absolute",
-    left: "82%",
+    left: "65%",
+    top:'10%'
   },
   headerbutton1: {
-    zIndex: 5000,
+    zIndex: 10100,
     position: "absolute",
     left: "35%",
-    top: "2.5%",
+    top: "10%",
   },
   headerbutton2: {
     zIndex: 5000,

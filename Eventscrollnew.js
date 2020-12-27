@@ -10,9 +10,10 @@ import {
 } from "react-native";
 import Draggable from 'react-native-draggable';
 import Carousel from "react-native-anchor-carousel";
-import axios from "axios";
 import Modal from "react-native-modal"; // 2.4.0
 import AsyncStorage from "@react-native-community/async-storage";
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import Swiper from "react-native-swiper";
 import * as Font from "expo-font";
 
 
@@ -166,14 +167,14 @@ class Eventscrollnew extends Component {
             position: "absolute",
             bottom: "87%",
             width: "100%",
-            height: 37,
+            height: '5%',
           }}
         />
         <Text
           style={{
             position: "absolute",
             bottom: "88%",
-            fontSize:15,
+            fontSize:RFValue(15, screenHeight),
             fontFamily: this.state.font,
           }}
         >{this.state.productname}</Text>
@@ -192,7 +193,7 @@ class Eventscrollnew extends Component {
           
         {this.state.sizeAndPrice? (this.state.sizeAndPrice.map((item, i) => {
          return (
-          <View style={{width:'60%',height:'8.5%',left:'15%',bottom:'32%',flexDirection:'row',paddingBottom:5,margin:5, }}>
+          <View style={{width:'60%',height:'8.5%',left:'15%',bottom:'32%',flexDirection:'row',paddingBottom:'1%',margin:'1%', }}>
           <Image
         source={require("./images/sizebg.png")}
         style={{
@@ -204,12 +205,12 @@ class Eventscrollnew extends Component {
       />
       <TouchableOpacity
         onPress={()=>this.onChangeQual(i,true,this.state.myitem,item.size,item.price)}
-        style={{ position: "absolute", left:'70%',top:'15%',zIndex:500}}
+        style={{ position: "absolute", left:'65%',top:'15%',zIndex:500}}
  
       >
         <Image
           source={require("./images/plusicon.png")}
-          style={{ width: 35, height: 35,resizeMode:'contain' }}
+          style={{ width: screenHeight/10.5, height: screenHeight/20,resizeMode:'contain' }}
         />
       </TouchableOpacity>
       <Text
@@ -219,19 +220,19 @@ class Eventscrollnew extends Component {
           left:'65%',
           fontWeight: "bold",
           fontFamily:this.state.font,
-          fontSize: 15,
+          fontSize: RFValue(15, screenHeight),
         }}
       >
         {this.state.sizenumbers[i]}
       </Text>
       <TouchableOpacity
       onPress={()=>this.onChangeQual(i,false,this.state.myitem,item.size,item.price)}
-        style={{ position: "absolute", left:'50%',top:'15%',zIndex:500}}
+        style={{ position: "absolute", left:'40%',top:'15%',zIndex:500}}
       
       >
         <Image
           source={require("./images/minceicon.png")}
-          style={{ width: 35, height: 35 }}
+          style={{  width: screenHeight/10.5, height: screenHeight/20,resizeMode:'contain'  }}
         />
       </TouchableOpacity>
         <Text style={{left:'20%',top:'5%',position:'absolute',fontFamily:this.state.font,}}>{item.size}</Text>
@@ -259,7 +260,7 @@ class Eventscrollnew extends Component {
         >
           <Image
             source={require("./images/addtocartbutton.png")}
-            style={{ width: 220, height: 100, resizeMode: "contain" }}
+            style={{ width: screenWidth/2, height: screenHeight/7, resizeMode: "contain" }}
           />
         </TouchableOpacity>
         {/*------------------------------------------------------------------- */}
@@ -269,7 +270,7 @@ class Eventscrollnew extends Component {
             position: "absolute",
             bottom: "26%",
             width: "100%",
-            height: 130,
+            height: screenHeight/6,
           }}
         />
         {/*------------------------------------------------------------------- */}
@@ -545,7 +546,7 @@ class Eventscrollnew extends Component {
             width: "25%",
             height: "12%",
             left:'10%',
-            fontSize:10,
+            fontSize:RFValue(10, screenHeight),
             fontFamily:this.state.font,}}>{this.state.myRelateddata[0].productName}</Text>
             </TouchableOpacity>):(<View></View>)}
         
@@ -596,7 +597,7 @@ class Eventscrollnew extends Component {
             width: "25%",
             height: "12%",
             left:'10%',
-            fontSize:11,fontFamily:this.state.font,}}>{this.state.myRelateddata[1].productName}</Text>
+            fontSize:RFValue(11, screenHeight),fontFamily:this.state.font,}}>{this.state.myRelateddata[1].productName}</Text>
             </TouchableOpacity>):(<View></View>)}
         
             {this.state.myRelateddata?(<TouchableOpacity 
@@ -646,7 +647,7 @@ class Eventscrollnew extends Component {
             width: "25%",
             height: "12%",
             left:'10%',
-            fontSize:11,fontFamily:this.state.font,}}>{this.state.myRelateddata[2].productName}</Text>
+            fontSize:RFValue(11, screenHeight),fontFamily:this.state.font,}}>{this.state.myRelateddata[2].productName}</Text>
             </TouchableOpacity>):(<View></View>)}
       </View>
     ) : (
@@ -819,123 +820,13 @@ class Eventscrollnew extends Component {
       </View>
     );
 
-  renderItem = ({ item, index }) => {
-    const { startDate, content, productimage, productName,_id ,productprice,sizeAndPrice} = item;
-
-    return (
-      
-      <View
-        style={{
-          flex: 1,
-          height: 500,
-          zIndex: 9000,
-        }}
-      >
-      
-        <TouchableOpacity
-          //activeOpacity={1}
-          style={styles.item}
-          onPress={() => {
-           
-          }}
-        >
-          <Image
-            source={require("./images/productnamebox.png")}
-            style={{
-              width: 127,
-              height: 80,
-              bottom: 120,
-              left: "2%",
-              resizeMode: "contain",
-              position: "absolute",
-              zIndex: 9,
-            }}
-          />
-          <View style={{position:'absolute',width:'75%',bottom:'80%',left:'10%'}}>
-          <Text style={{ fontSize: 15, zIndex: 10,textAlign:'center',fontFamily:this.state.font,}}>
-            {productName}
-          </Text>
-          </View>
-          <Draggable 
-            imageSource={{uri:productimage}} 
-            renderSize={100} 
-            x={10}
-            y={75}
-            z={10}
-            shouldReverse={true}
-            //onDrag={}
-            //onDrag={()=>this.props.parentReference('data')}
-           
-            onDragRelease={(gestureState)=>
-              //this.onClickAddCart(this.state.mydata[index])
-              {gestureState.nativeEvent.locationX >=screenWidth/2.4 ? (this.onClickAddCart(this.state.mydata[index])):(alert('please drag the item to the footer'))}
-            }
-        />  
-        
-          {/*<Image
-            source={{ uri: productimage }}
-            style={styles.imageBackground}
-          />*/}
-        </TouchableOpacity>
-        <TouchableOpacity style={{zIndex:1000000}}  onPress={() => {
-              //this.numberCarousel.scrollToIndex(index)
-              
-              this.state.productname = this.state.mydata[index].productName;
-              this.state.eventid = this.state.mydata[index]._id;
-              this.state.productimage = this.state.mydata[index].productimage;
-              this.state.myitem = this.state.mydata[index];
-             
-              
-              this.state.sizeAndPrice=this.state.mydata[index].sizeAndPrice;
-              
-              this.setState({sizenumbers:[0,0,0]})
-              this.setState({counter:[]})
-              this.setState({ visibleModal: 5 });
-
-              fetch('http://www.tamweenymarket.com/api/products/'+ this.state.mydata[index]._id+'/related')
-              .then((response) => response.json())
-              .then((responseJson) => {
-                this.setState({
-                  myRelateddata: responseJson,
-                });
-              });
-
-              
-      
-            }} style={styles.item2}>
-          <Image
-            source={require("./images/sizeofprod.png")}
-            style={{
-              width: 89,
-              height: 18,
-              resizeMode: "contain",
-              position: "absolute",
-              zIndex: 100001,
-            }}
-          />
-          <Text style={{zIndex:100002,top:'13%',color:'red',textAlign:'center',left:'5%',fontFamily:this.state.font,}}>{sizeAndPrice[0].price} EGP</Text>
-          <Image
-            source={require("./images/sizesbutton.png")}
-            style={{
-              width: 150,
-              height: 95,
-              left: "3%",
-              resizeMode: "contain",
-              position: "absolute",
-              zIndex: 9,
-            }}
-          />
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
+   
   render() {
     
     return (
       //THIS IS A ONE MODAL FOR EVERY EVENT WITH DIFFERENT INFORMATION DEPENDS ON THE INDEX  (MODAL TO RESERVE AN EVENT)
 
-      <View style={{ height: "40%", top: "50%", zIndex: 5000 }}>
+      <View style={{ height: "40%", top: "50%", zIndex: 5000,width:'100%' }}>
         <Modal
           isVisible={this.state.visibleModal === 5}
           style={styles.bottomModal}
@@ -949,20 +840,147 @@ class Eventscrollnew extends Component {
 
         {/*end of modal ,, start of carousel rendering */}
         
-        <Carousel
-          style={styles.carousel}
-          data={this.state.mydata}
-          renderItem={this.renderItem}
-          itemWidth={140}
-          inActiveScale={1}
-          inActiveOpacity={1}
-          containerWidth={width}
-          pagingEnable={false}
-          ref={(c) => {
-            this.numberCarousel = c * 3;
-          }}
+         
+    return (
+      <Swiper
+      
+      
+        containerStyle={styles.wrapper}
+        showsButtons={false}
+        pagingEnabled={false}
+        pagination={false}
+        autoplay={false}
+        loop={true}
+        dot={<View style={{ opacity: 0 }} />}
+        activeDot={<View style={{ opacity: 0 }} />}
+
+      >
+
+{this.state.dataSource?(
+            this.state.dataSource.map((item, s) => {
+              while (s < Math.floor((this.state.dataSource.length/10)+1)) {
+                
+                var max = s*2;
           
-        />
+                return ( 
+        <View style={{ position: "absolute",flexDirection:'row',width:screenWidth+(screenWidth/9),flexWrap:'wrap',}}>
+
+         {this.state.dataSource?(
+            this.state.dataSource.slice(max,this.state.dataSource.length).map((item, i) => {
+            while(i<10)
+            {
+                return ( 
+                  <View
+                  style={{
+                    flex: 1,
+                    
+                    zIndex: 9000,
+                  }}
+                >
+                
+                  <TouchableOpacity
+                    //activeOpacity={1}
+                    style={styles.item}
+                    onPress={() => {
+                     
+                    }}
+                  >
+                    <Image
+                      source={require("./images/productnamebox.png")}
+                      style={{
+                        width: screenWidth/3.3,
+                        height: screenHeight/10,
+                        bottom: '70%',
+                        left: "2%",
+                        resizeMode: "contain",
+                        position: "absolute",
+                        zIndex: 9,
+                      }}
+                    />
+                    <View style={{position:'absolute',width:'75%',bottom:'80%',left:'10%'}}>
+                    <Text style={{ fontSize: RFValue(15, screenHeight), zIndex: 10,textAlign:'center',fontFamily:this.state.font,}}>
+                      {productName}
+                    </Text>
+                    </View>
+                    <Draggable 
+                      imageSource={{uri:productimage}} 
+                      renderSize={screenWidth/4} 
+                      x={screenWidth/40}
+                      y={screenHeight/10}
+                      z={screenWidth/40}
+                      shouldReverse={true}
+                      //onDrag={}
+                      //onDrag={()=>this.props.parentReference('data')}
+                     
+                      onDragRelease={(gestureState)=>
+                        //this.onClickAddCart(this.state.mydata[index])
+                        {gestureState.nativeEvent.locationX >=screenWidth/2.4 ? (this.onClickAddCart(this.state.mydata[index])):(alert('please drag the item to the footer'))}
+                      }
+                  />  
+                  
+                    {/*<Image
+                      source={{ uri: productimage }}
+                      style={styles.imageBackground}
+                    />*/}
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{zIndex:1000000}}  onPress={() => {
+                        //this.numberCarousel.scrollToIndex(index)
+                        
+                        this.state.productname = this.state.mydata[index].productName;
+                        this.state.eventid = this.state.mydata[index]._id;
+                        this.state.productimage = this.state.mydata[index].productimage;
+                        this.state.myitem = this.state.mydata[index];
+                       
+                        
+                        this.state.sizeAndPrice=this.state.mydata[index].sizeAndPrice;
+                        
+                        this.setState({sizenumbers:[0,0,0]})
+                        this.setState({counter:[]})
+                        this.setState({ visibleModal: 5 });
+          
+                        fetch('http://www.tamweenymarket.com/api/products/'+ this.state.mydata[index]._id+'/related')
+                        .then((response) => response.json())
+                        .then((responseJson) => {
+                          this.setState({
+                            myRelateddata: responseJson,
+                          });
+                        });
+          
+                        
+                
+                      }} style={styles.item2}>
+                    <Image
+                      source={require("./images/sizeofprod.png")}
+                      style={{
+                        width: screenWidth/7,
+                        height: screenHeight/30,
+                        left:'15%',
+                        resizeMode: "contain",
+                        position: "absolute",
+                        zIndex: 100001,
+                      }}
+                    />
+                    <Text style={{zIndex:100002,top:'13%',color:'red',textAlign:'center',left:'5%',fontFamily:this.state.font,fontSize:RFValue(15,screenHeight)}}>{sizeAndPrice[0].price} EGP</Text>
+                    <Image
+                      source={require("./images/sizesbutton.png")}
+                      style={{
+                        width: screenWidth/3,
+                        height: screenHeight/8,
+                        left: "5%",
+                        resizeMode: "contain",
+                        position: "absolute",
+                        zIndex: 9,
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>)
+        }})):(<View></View>)}
+        </View>
+        )}})):(<View></View>)}
+        
+        
+      </Swiper>
+    );
       </View>
     );
   }
@@ -1039,13 +1057,12 @@ export default Eventscrollnew;
 
 const styles = StyleSheet.create({
   carousel: {
-    flex: 1,
-    height: 200,
-    width: "70%",
+    
+   
   },
   item: {
     flex: 1,
-    top: 112,
+    top: '32%',
     height: 1000,
     zIndex: 9000,
     // borderRadius: 1200/ 2,
@@ -1065,8 +1082,8 @@ const styles = StyleSheet.create({
   item2: {
     right: "11%",
     flex: 1,
-    top: 100,
-    height: 1000,
+    top: '27%',
+    
     zIndex: 1000,
     // borderRadius: 1200/ 2,
   },
@@ -1092,7 +1109,7 @@ const styles = StyleSheet.create({
     zIndex: 60,
     bottom: "72%",
     fontWeight: "bold",
-    fontSize: 10,
+    fontSize: RFValue(10, screenHeight),
     right: "0%",
     left: "18%",
   },
@@ -1106,8 +1123,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
+    borderTopLeftRadius: screenWidth/10,
+    borderTopRightRadius: screenWidth/10,
     borderColor: "rgba(0, 0, 0, 0.1)",
     height: "78%",
   },

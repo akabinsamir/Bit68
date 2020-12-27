@@ -9,15 +9,13 @@ import {
   SafeAreaView,
   ScrollView,
   Dimensions,
+  StatusBar,
 } from "react-native";
-import Modal from "react-native-modal"; // 2.4.0
-import { AntDesign } from '@expo/vector-icons';
+
 import SearchInput, { createFilter } from "react-native-search-filter";
 import Eventscrollnew from "./Eventscrollnew";
-import Firstswipe from "./Firstswipe";
-import Subcategory from "./Subcategory";
-import Brands from "./Brands";
 import AsyncStorage from "@react-native-community/async-storage";
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 import * as Font from "expo-font";
 
 const KEYS_TO_FILTERS = ["productName"];
@@ -27,7 +25,7 @@ let screenHeight = Dimensions.get("window").height;
 
 class Products extends React.Component {
   static navigationOptions = {
-    title: "المنتجات",
+    title: "Products",
     drawerIcon: (
       <View style={{ bottom: "28%" }}>
         <Image
@@ -51,7 +49,7 @@ class Products extends React.Component {
       switchValue: false,
       finalname: null,
       visibleModal: null,
-      mydata: null,
+      mydata: {},
       searchTerm: "",
       filteredMydata: null,
       isTrue: true,
@@ -86,224 +84,63 @@ class Products extends React.Component {
       }
     }
   }
-  brandupdate(x) {
-    this.setState({
-      filteredMydata: x,
-    });
-  }
-  subcupdate(x) {
-    this.setState({
-      filteredMydata: x,
-    });
-  }
+ 
   componentDidUpdate(prevProps, prevState) {
+    
     if (
-      prevProps.navigation.state.params.link !==
-      this.props.navigation.state.params.link
+      prevProps.navigation.state.params.catid !==
+      this.props.navigation.state.params.catid
     ) {
-      this.setState({
-        mydata: null,
-        mycatName: null,
-      });
-      const { navigation } = this.props;
-      const { link } = navigation.state.params;
-      const { cat } = navigation.state.params;
-
-      fetch("http://www.tamweenymarket.com/api/categories/" + link)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          this.setState({
-            mydata: responseJson,
-            mycatName: cat,
-          });
-          fetch(
-            "http://www.tamweenymarket.com/api/categories/" + link + "/brands"
-          )
-            .then((response) => response.json())
-            .then((responseJson) => {
-              this.setState({
-                mybrands: responseJson,
-              });
-              fetch(
-                "http://www.tamweenymarket.com/api/categories/" + link + "/subc"
-              )
-                .then((response) => response.json())
-                .then((responseJson) => {
-                  this.setState({
-                    subc: responseJson,
-                  });
-                  fetch("http://www.tamweenymarket.com/api/categories/")
-                    .then((response) => response.json())
-                    .then((responseJson) => {
-                      this.setState({
-                        mycategories: responseJson,
-                      });
-                    });
-                });
-            });
+       fetch("https://5bcce576cf2e850013874767.mockapi.io/task/categories/" + this.props.navigation.state.params.catid)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          mydata: responseJson,
         });
+      })
+  
+
     }
   }
-  async componentDidMount() {
+ async componentDidMount() {
    
-    await Font.loadAsync({
+    /*await Font.loadAsync({
       'main':require('./assets/fonts/Tajawal-Regular.ttf')
-    })
+    })*/
 
-    this.setState({font:'main'})
+    //this.setState({font:'main'})
 
     const { navigation } = this.props;
     if (!navigation.state.params) {
-      const link = "5f4fbc57782b7f1c0ceab1f0";
-    } else if (navigation.state.params.link != null) {
-      const { navigation } = this.props;
-      const { link } = navigation.state.params;
-      const { cat } = navigation.state.params;
+      const catid = 1;
+    } else if (navigation.state.params.catid != null) {
+      const { catid } = navigation.state.params;
 
-      this.setState({
-        mycatName: cat,
-      });
-
-      fetch("http://www.tamweenymarket.com/api/categories/" + link)
+    await fetch("https://5bcce576cf2e850013874767.mockapi.io/task/categories/" + catid)
         .then((response) => response.json())
         .then((responseJson) => {
           this.setState({
             mydata: responseJson,
           });
-        });
-      fetch("http://www.tamweenymarket.com/api/categories/" + link + "/brands")
-        .then((response) => response.json())
-        .then((responseJson) => {
-          this.setState({
-            mybrands: responseJson,
-          });
-        });
-      fetch("http://www.tamweenymarket.com/api/categories/" + link + "/subc")
-        .then((response) => response.json())
-        .then((responseJson) => {
-          this.setState({
-            subc: responseJson,
-          });
-        });
-      fetch("http://www.tamweenymarket.com/api/categories/")
-        .then((response) => response.json())
-        .then((responseJson) => {
-          this.setState({
-            mycategories: responseJson,
-          });
-        });
+        })
     }
+    
   }
-
-  /* toggleSwitch = (value) => {
-          //onValueChange of the switch this function will be called
-          this.setState({switchValue: value})
-          //state changes according to switch
-          //which will result in re-render the text
-      }*/
-  _renderModalContent = () => (
-    <View style={styles.modalContent}>
-      <ScrollView
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: screenHeight / 2.4,
-          zIndex: 40000,
-          left: "5%",
-        }}
-      >
-        <View style={{ right: "5%" }}>
-          <View style={{ position: "absolute", left: "10%" }}>
-            {this.state.mycategories ? (
-              this.state.mycategories.map((item, i) => {
-                while (i >= this.state.mycategories.length / 2) {
-                  return (
-                    <Text
-                    onPress={async() => {
-                      //on clicking we are going to open the URL using Linking
-                     await fetch("http://www.tamweenymarket.com/api/categories/" + item._id)
-                      .then((response) => response.json())
-                      .then((responseJson) => {
-                        this.setState({
-                          mycatdata: responseJson,
-                          mycatName:item.name
-                        });
-                        console.log(responseJson)
-                        this.setState({visibleModal:null})
-                      });
-                    }}
-                    style={(item.name==this.state.mycatName) ? styles.catTextright2 : styles.catTextright}
-                    >
-                      {item.name}
-                    </Text>
-                  );
-                }
-              })
-            ) : (
-              <View></View>
-            )}
-          </View>
-          <View>
-            {this.state.mycategories ? (
-              this.state.mycategories.map((item, i) => {
-                while (i < this.state.mycategories.length / 2) {
-                  return (
-                    <Text
-                    onPress={async() => {
-                      //on clicking we are going to open the URL using Linking
-                     await fetch("http://www.tamweenymarket.com/api/categories/" + item._id)
-                      .then((response) => response.json())
-                      .then((responseJson) => {
-                        this.setState({
-                          mycatdata: responseJson,
-                          mycatName:item.name
-                        });
-
-                        console.log(responseJson)
-                        this.setState({visibleModal:null})
-                      });
-                    }}
-                      style={(item.name==this.state.mycatName) ? styles.catTextleft2 : styles.catTextleft}
-                    >
-                      {item.name}
-                    </Text>
-                  );
-                }
-              })
-            ) : (
-              <View></View>
-            )}
-          </View>
-        </View>
-      </ScrollView>
-    </View>
-  );
-
   render() {
-    const { navigation } = this.props;
-
-    const username = "batates";
-    const partname = username.split(" ")[0];
-    //const filteredEmails = mydata.filter(createFilter(this.state.searchTerm, KEYS_TO_FILTERS))
-
-    if (partname.length > 10) {
-      this.state.finalname = partname.substring(0, 10) + "..";
-    }
 
     return (
       <ImageBackground
         source={require("./images/mrwhite.jpg")}
         style={{ width: "100%", height: "100%", flex: 1, zIndex: 0 }}
       >
-        {/*  <NavigationEvents
-                onDidFocus={this.myfunction()}
-              />*/}
-        <View style={styles.header}>
+        <StatusBar translucent backgroundColor="transparent" />
+        
+    {this.state.mydata?( <View style={styles.header}>
           <Image
-            source={require("./images/headertamween.png")}
+            source={{ uri:this.state.mydata.category_img }}
             style={styles.headerphoto}
           />
-        </View>
+        </View>):(<View><Text>Loading...</Text></View>)}
         <View style={styles.footer}>
           <Image
             source={require("./images/footertamween.png")}
@@ -311,27 +148,18 @@ class Products extends React.Component {
           />
         </View>
 
-        {/*} <View style={styles.footerprice}>
-          <Image
-            source={require("./images/footerpricebg.png")}
-            style={styles.footerphoto}
-          />
-            </View>*/}
-
-        <View style={styles.menu}>
+       <View style={styles.menu}>
           <SafeAreaView>
             <TouchableOpacity
               style={{
                 alignItems: "flex-end",
-                margin: 16,
-                top: "40%",
-                zIndex: 500000,
+                zIndex: 500,
               }}
               onPress={this.props.navigation.openDrawer}
             >
               <Image
-                source={require("./images/menutamween.png")}
-                style={{ width: 30, height: 30 }}
+                source={require("./images/bitbackbutton.png")}
+                style={{ width: screenWidth/13, height: screenWidth/13 ,resizeMode:'contain',tintColor:'black'}}
               />
             </TouchableOpacity>
           </SafeAreaView>
@@ -341,28 +169,25 @@ class Products extends React.Component {
             onPress={() => {
               AsyncStorage.getItem("cart")
                 .then((cart) => {
-                  //console.log(this.state.totalprice)
-
-                  // We have data!!
                   const cartfood = JSON.parse(cart);
                   this.props.navigation.navigate("Cart", {
                     cart: cartfood,
+                    username:this.state.username
                   });
+                  console.log(cartfood);
                 })
                 .catch((err) => {
                   alert(err);
                 });
             }}
             style={{
-              alignItems: "flex-end",
-              margin: 16,
-              top: "30%",
+       
               zIndex: 500,
             }}
           >
             <Image
-              source={require("./images/carttamween.png")}
-              style={{ width: 40, height: 40 }}
+              source={require("./images/bitcart.png")}
+              style={{ width: screenWidth/2 ,height:screenHeight/27,resizeMode:'contain' ,}}
             />
           </TouchableOpacity>
         </View>
@@ -370,7 +195,7 @@ class Products extends React.Component {
           <SearchInput
             style={{
               margin: 5,
-              height: 60,
+              height: screenHeight/11,
               opacity: 1,
               width: "82.5%",
               bottom: "2%",
@@ -380,11 +205,11 @@ class Products extends React.Component {
               color: "gray",
               
 
-              fontSize: 20,
+              fontSize: RFValue(20, screenHeight),
               zIndex: 5001,
             }}
             underlineColorAndroid="transparent"
-            placeholder="ابحث عن منتج"
+            placeholder="Look for a product"
             placeholderTextColor="gray"
             autoCapitalize="none"
             onChangeText={(term) => {
@@ -394,85 +219,22 @@ class Products extends React.Component {
 
           <Image
             source={require("./images/searchbar.png")}
-            style={{ width: 220, height: 40, bottom: "50%", left: "7%" }}
+            style={{ width: screenWidth/1.6, height: screenHeight/12, bottom: "50%",resizeMode:'contain'}}
           />
         </View>
-        <View style={styles.headerbuttoncat}>
-          <TouchableOpacity
-            onPress={() => {
-              {
-                /*} this.numberCarousel.scrollToIndex(index);*/
-              }
-              //this.state.modaldate=this.state.mydata[index].startDate
-              //this.state.eventid = this.state.mydata[index].id
-              this.setState({ visibleModal: 2 });
-            }}
-            style={{ margin: 16, zIndex: 500 }}
-          >
-            <Text
-              style={{
-                color: "#80fc38",
-                fontSize: 20,
-                textAlign: "center",
-                fontFamily: this.state.font,
-              }}
-            >
-              {this.state.mycatName} 
-            </Text>
-            <AntDesign style={{top:"35%",position:'absolute', zIndex:500,left:'40%'}} name="caretdown" size={10} color="#80fc38" />
-          </TouchableOpacity>
+        <View>
+
         </View>
-
-        <ScrollView style={{ width: "100%", height: "100%" }}>
-          <View style={styles.container}></View>
-
-          <View style={{ flex: 1, top: "12%", height: "29%", opacity: 0 }}>
-            <Firstswipe />
-          </View>
-          {/*<View style={{top:'18%'}}>
-            <Image source={require('./images/backgroundCUT.png')} style={styles.minibacktwo} />
-        </View>*/}
-          <View
-            style={{
-              position: "absolute",
-              top: "13%",
-              left: "51%",
-              zIndex: 100,
-            }}
-          >
-            <Image
-              source={require("./images/subcatword.png")}
-              style={{ width: 180, height: 33 }}
-            />
-            {/*Text to show the text according to switch condition*/}
-          </View>
-          {this.state.subc ? (
-            <View
-              style={{
-                position: "absolute",
-                bottom: "74%",
-                height: screenHeight/10,
-                width: screenWidth,
-                zIndex: 1000,
-                left: "5%",
-              }}
-            >
-              <Subcategory
-                functionPropNameHere={this.subcupdate.bind(this)}
-                subc={this.state.subc}
-                navigation={this.props.navigation}
-              />
-            </View>
-          ) : (
-            <View></View>
-          )}
+      {/* <ScrollView style={{ width: "100%", height: "100%" }}>
+  
+         
           {this.state.filteredMydata ? (
             <View
               style={{
                 position: "absolute",
                 bottom: "25.5%",
-                height: 850,
-                width: 600,
+                height:screenHeight+(screenHeight/7),
+                width:screenWidth+screenWidth,
                 zIndex: 500,
                 left: "0.5%",
               }}
@@ -492,8 +254,8 @@ class Products extends React.Component {
               style={{
                 position: "absolute",
                 bottom: "25.5%",
-                height: 850,
-                width: 600,
+                height:screenHeight+(screenHeight/7),
+                width:screenWidth+screenWidth,
                 zIndex: 500,
                 left: "0.5%",
               }}
@@ -513,8 +275,8 @@ class Products extends React.Component {
               style={{
                 position: "absolute",
                 bottom: "25.5%",
-                height: 850,
-                width: 600,
+                height:screenHeight+(screenHeight/7),
+                width:screenWidth+screenWidth,
                 zIndex: 500,
                 left: "0.5%",
               }}
@@ -530,68 +292,12 @@ class Products extends React.Component {
           <View style={{ position: "absolute", bottom: "72%", zIndex: 2 }}>
             <Image
               source={require("./images/catbg.png")}
-              style={{ width: 500, height: 110, resizeMode: "stretch" }}
+              style={{ width: screenWidth/0.8, height: 110, resizeMode: "stretch" }}
             />
           </View>
 
-          <View style={{ position: "absolute", bottom: "29%", zIndex: 200 }}>
-            <Image
-              source={require("./images/sanfbg.png")}
-              style={{ width: 420, height: 400 }}
-            />
-          </View>
-
-          <View style={{ bottom: "35.7%", zIndex: 200 }}>
-            <Image
-              source={require("./images/shelf2.png")}
-              style={{ width: 412, height: 200 }}
-            />
-          </View>
-
-          <View
-            style={{
-              position: "absolute",
-              bottom: "65%",
-              zIndex: 201,
-              left: "40%",
-            }}
-          >
-            <Image
-              source={require("./images/sanfword.png")}
-              style={{ width: 80, height: 29 }}
-            />
-          </View>
-
-          {this.state.mybrands ? (
-            <View
-              style={{
-                position: "absolute",
-                bottom: "55%",
-                height: '10%',
-                width: 500,
-                zIndex: 1000,
-                left: "0.5%",
-              }}
-            >
-              <Brands
-                brands={this.state.mybrands}
-                functionPropNameHere={this.brandupdate.bind(this)}
-                navigation={this.props.navigation}
-              />
-            </View>
-          ) : (
-            <View></View>
-          )}
-        </ScrollView>
-        <Modal
-          style={styles.bottomModal}
-          isVisible={this.state.visibleModal === 2}
-          animationIn={"slideInDown"}
-          animationOut={"slideOutUp"}
-          onBackdropPress={() => this.setState({ visibleModal: null })}
-        >
-          {this._renderModalContent()}
-        </Modal>
+         
+          </ScrollView>*/}
       </ImageBackground>
     );
   }
@@ -607,21 +313,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   header: {
+    
     zIndex: 5000,
-    width: screenWidth,
-    height: screenHeight / 9,
+  
     top: "0%",
-    alignItems: "center",
+    alignItems:'center',
     position: "absolute",
+    
   },
   headerphoto: {
-    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    resizeMode: "contain",
+    resizeMode:'stretch',
+    width: screenWidth,
+    height: screenHeight/2.2,
+    
+   
   },
   footer: {
-    alignItems: "center",
+    alignItems:'center',
     zIndex: 5000,
     width: screenWidth,
     height: screenHeight / 10.5,
@@ -633,7 +343,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
 
-    resizeMode: "contain",
+    resizeMode:'contain'
   },
   footerprice: {
     flex: 1,
@@ -647,7 +357,7 @@ const styles = StyleSheet.create({
 
   textmenu: {
     color: "#541e1b",
-    fontSize: 20,
+    fontSize: RFValue(20, screenHeight),
     fontWeight: "500",
   },
   logo: {
@@ -662,13 +372,16 @@ const styles = StyleSheet.create({
     zIndex: 3,
   },
   menu: {
-    zIndex: 500000,
+    zIndex: 100000,
     position: "absolute",
+    top:'10%',
+    left:'5%'
   },
   cart: {
-    zIndex: 5002,
+    zIndex: 5000,
     position: "absolute",
-    left: "82%",
+    left: "65%",
+    top:'10%'
   },
   headerbutton1: {
     zIndex: 5001,
@@ -793,7 +506,7 @@ const styles = StyleSheet.create({
   },
   catTextleft:
   {
-    fontSize: 25,
+    fontSize: RFValue(25, screenHeight),
     padding: 15,
     borderBottomWidth: 1,
     color:'gray',
@@ -803,7 +516,7 @@ const styles = StyleSheet.create({
   },
   catTextleft2:
   {
-    fontSize: 25,
+    fontSize: RFValue(25, screenHeight),
     padding: 15,
     borderBottomWidth: 1,
     color:'#80fc38',
@@ -812,7 +525,7 @@ const styles = StyleSheet.create({
   },
   catTextright:
   {
-    fontSize: 25,
+    fontSize: RFValue(25, screenHeight),
     padding: 15,
     borderBottomWidth: 1,
     color:'gray',
@@ -821,7 +534,7 @@ const styles = StyleSheet.create({
   },
   catTextright2:
   {
-    fontSize: 25,
+    fontSize: RFValue(25, screenHeight),
     padding: 15,
     borderBottomWidth: 1,
     color:'#80fc38',

@@ -69,6 +69,17 @@ export default class Categories extends React.Component {
       font:'normal',
     };
   }
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.mydata !==
+      this.props.mydata
+    ) {
+      this.setState({
+        dataSource:this.props.mydata
+    })
+
+    }
+  }
 
 async componentDidMount() {
   
@@ -78,7 +89,7 @@ async componentDidMount() {
 
   this.setState({font:'main'})
  
-    fetch("http://www.tamweenymarket.com/api/categories/")
+    fetch("https://5bcce576cf2e850013874767.mockapi.io/task/categories")
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
@@ -92,15 +103,13 @@ async componentDidMount() {
       });
   }
   
-  navi = (text,name) => {
-  if (text != null && name != null)
+  navi = (id) => {
+  if (id != null)
   {
-    this.props.navigation.navigate("Products",{
-      link:text,
-      cat:name
+    this.props.navigation.navigate(("Products"),{
+      catid:id
     });
   }
-    //console.log(text)
   };
 
   render() {
@@ -116,6 +125,7 @@ async componentDidMount() {
         pagingEnabled={false}
         pagination={false}
         autoplay={false}
+        loop={true}
         dot={<View style={{ opacity: 0 }} />}
         activeDot={<View style={{ opacity: 0 }} />}
 
@@ -125,10 +135,10 @@ async componentDidMount() {
             this.state.dataSource.map((item, s) => {
               while (s < Math.floor((this.state.dataSource.length/10)+1)) {
                 
-                var max = s*10;
+                var max = s*2;
           
                 return ( 
-        <View style={{ position: "absolute",flexDirection:'row',width:screenWidth+50,flexWrap:'wrap',}}>
+        <View style={{ position: "absolute",flexDirection:'row',width:screenWidth+(screenWidth/9),flexWrap:'wrap',}}>
 
          {this.state.dataSource?(
             this.state.dataSource.slice(max,this.state.dataSource.length).map((item, i) => {
@@ -137,30 +147,58 @@ async componentDidMount() {
                 return ( 
          <TouchableOpacity
          
-            onPress={() => this.navi(item._id,item.name)}
-            style={{marginVertical:-screenWidth/10}}
+            onPress={() => this.navi(item.id)}
+            style={{marginVertical:-screenWidth/5,marginHorizontal:7}}
           >
             <Image
-              source={{ uri:item.categoryimage }}
+              source={{ uri:item.category_img }}
               style={{
-                height: screenHeight/5,
-                width: screenWidth/4.5,
+                height: screenHeight/2,
+                width: screenWidth/2.2,
                 resizeMode:'contain',
-                zIndex: 100,
+                zIndex: 99,
+                borderRadius:15
               }}
             />
             <Text
               style={{
-                fontSize: 10,
+                fontSize: 15,
                 zIndex: 100,
+                fontWeight:'bold',
                 fontFamily:this.state.font,
-                textAlign:'center',bottom:'30%'
+                textAlign:'center',
+                bottom:'40%',
+                textAlign:'left',
+                color:'white',
+                textShadowColor:'black',
+                textShadowOffset:{width: 3, height: 3},
+                textShadowRadius:20,
+                left:'10%'
               }}
             >
               {item.name}
             </Text>
+            {
+            i%2 & i!=1? //to insert an image every two data indexes as mentioned in design
+               
+                  (   <Image
+                    source={require('./images/datasep.png')}
+                    style={{
+                      height: screenHeight/8,
+                      width: screenWidth,
+                      zIndex: 200,
+                      resizeMode:'stretch',
+                      position:'absolute',
+                      right:'0%',
+                      borderRadius:15,
+                      bottom:'71%',
+                    }}
+                  />):(<View></View>)
+                
+            }
             
-          </TouchableOpacity>)}})):(<View></View>)}
+          </TouchableOpacity>)
+        }})):(<View></View>)}
         </View>
         )}})):(<View></View>)}
         

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Tamweeny",
-    "slug": "Tamweeny",
+    "name": "Bit68",
+    "slug": "Bit68",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/tamweeny.png",
@@ -13,9 +13,9 @@
     "facebookDisplayName":"Tamweeny", 
     "platforms":["android","ios"],
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./images/splashlogo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#D95500"
     },
 
     "assetBundlePatterns": [
@@ -26,7 +26,7 @@
     },
  
     "android": {
-      "package": "com.abdelrahman77.Tamweeny",
+      "package": "com.abdelrahman77_Tamweeny",
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyCKFImBVI91NAIzI-IHt4LJUhjFJw7DzfQ"

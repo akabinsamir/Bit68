@@ -15,7 +15,6 @@ const styles = StyleSheet.create({
   wrapper: {},
   slide1: {
     flex: 1,
-    top: "1%",
     marginBottom: "10%",
     paddingBottom: "5%",
     paddingTop: "4%",
@@ -85,8 +84,10 @@ export default class Swiperinto extends React.Component {
         pagination={false}
         autoplay={true}
         autoplayTimeout={3}
-        dot={<View style={{ opacity: 0 }} />}
-        activeDot={<View style={{ opacity: 0 }} />}
+
+        dotColor={'white'}
+        dot={<View style={{borderWidth:10/7, borderRadius:10,borderColor:'#D95500',backgroundColor:'white', width: 16, height: 16,borderRadius: 8, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,bottom:'70%'}} />}
+        activeDot={<View style={{backgroundColor:'#D95500', width: 16, height: 16,borderRadius: 8, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,bottom:'70%'}} />}
       >
         <View
           style={{
@@ -97,10 +98,10 @@ export default class Swiperinto extends React.Component {
           }}
         >
           <Image
-            source={require('./images/94116650-special-offer-banner-in-trendy-style-supermarket-sale-proposition-up-to-50-off-message-retail-market.jpg')}
+            source={require('./images/bitslider.png')}
             style={{
               width: screenWidth,
-              resizeMode: "contain",
+  
             }}
           />
         </View>
@@ -113,10 +114,10 @@ export default class Swiperinto extends React.Component {
           }}
         >
           <Image
-            source={require('./images/OOHMID2.jpg')}
+            source={require('./images/bitslider.png')}
             style={{
               width: screenWidth,
-              resizeMode: "contain",
+
             }}
           />
         </View>
@@ -129,10 +130,10 @@ export default class Swiperinto extends React.Component {
           }}
         >
           <Image
-            source={require('./images/94116645-mega-sale-banner-template-in-trendy-style-retail-marketing-information-new-advertising-campaign-holi.jpg')}
+            source={require('./images/bitslider.png')}
             style={{
               width: screenWidth,
-              resizeMode: "contain",
+
             }}
           />
         </View>

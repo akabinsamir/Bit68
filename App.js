@@ -5,28 +5,28 @@ import { StyleSheet, } from 'react-native';
 //import HorizontalScrollView from './components/HorizontalScrollView';
 import { Pages } from 'react-native-pages';
 
-import Signup from './Signup';
-import Home from './Home';
+//import Signup from './Signup';
+import Bithome from './Bithome';
 /*import Intro from './Intro';
 import Screen from './Screen';
 import Aboutus from './Aboutus'
 import calender from './Calender'
 import Eventscroll from './Eventscroll'
-import Location from './Location';
-import Firstswipe from './Firstswipe';
+import Location from './Location';*/
+import Firstswipe from './Firstswipe';/*
 import Eventscrollnew from './Eventscrollnew';
 import Genres from './Genres';
 import Monthswiper from './Monthswiper';
 import Moscrollone from './Moscrollone';
 import Footer1 from './Footer1';
 import Readmore from './Readmore';
-import Storage from './Storage';*/
-import Login from './Login';
+import Storage from './Storage';
+import Login from './Login';*/
 import Products from './Products';
-import Categories from './Categories';
+/*import Categories from './Categories';
 import Cart from './Cart';
 import Reciept from './Reciept';
-import Splash from './Splash';
+import Splash from './Splash';*/
 import {createAppContainer} from 'react-navigation';
 import {createDrawerNavigator} from 'react-navigation-drawer';
 import Slidebar from "./Slidebar";
@@ -47,7 +47,7 @@ const DrawerNavigator = createDrawerNavigator(
 
       
  
-    /*  Splash: {
+    Splash: {
           screen:Splash,
           navigationOptions: {
             
@@ -59,8 +59,8 @@ const DrawerNavigator = createDrawerNavigator(
           },
           
         
-        },*/
- Login: {
+        },
+/* Login: {
           screen:Login,
           navigationOptions: {
             
@@ -99,13 +99,13 @@ const DrawerNavigator = createDrawerNavigator(
           },
           
         
-        },
-        Home:Home,
+        },*/
+       Bithome:Bithome,
        Products:Products,
-        Cart:Cart,
-        Reciept: {
-          screen:Reciept,
-          navigationOptions: {
+       // Cart:Cart,
+       // Reciept: {
+         // screen:Reciept,
+         /* navigationOptions: {
             
             drawerLockMode:'locked-closed',
             drawerLabel: () => null
@@ -115,7 +115,7 @@ const DrawerNavigator = createDrawerNavigator(
           },
         
         }
-        
+        */
         
 
 

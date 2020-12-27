@@ -12,7 +12,7 @@ var { width } = Dimensions.get("window")
   static navigationOptions =
   {
      
-     title:'طلباتي',
+     title:'My Cart',
     
      drawerIcon: (
       <View style={{bottom:'28%'}}>
@@ -368,8 +368,8 @@ var { width } = Dimensions.get("window")
                       .catch((err)=>{
                         alert(err)
                       })
-                    }} style={{zIndex:1002}}>
-                        <Image source={require('./images/confirmbutton.png')} style={{width:400,height:60}}/>
+                    }} style={{zIndex:1002,right:'2%'}}>
+                        <Image source={require('./images/confirmbutton.png')} style={{width:screenWidth/1,height:60}}/>
                     </TouchableOpacity> 
 
             </View>
@@ -419,10 +419,10 @@ var { width } = Dimensions.get("window")
      
         {/*<AppStackNavigator/>*/}
         {/*CART ITEMS---------------------------------------------------------------------------------------- */}
-        <View style={{alignItems: 'center', justifyContent: 'center',height:550,bottom:'20%'}}>
+        <View style={{alignItems: 'center', justifyContent: 'center',height:'68%',bottom:'20%'}}>
          <View style={{flex:1}}>
 
-           <ScrollView style={{zIndex:300,height:800,}}>
+           <ScrollView style={{zIndex:300,height:screenHeight,}}>
 
              {
                this.state.dataCart.map((item,i)=>{
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     flex:1,
-    zIndex:500,
+    zIndex:1003,
     width:screenWidth,
     height:screenHeight/10.5,
     bottom:'0%',
@@ -542,7 +542,7 @@ footerphoto:{
   alignItems: 'center',
   justifyContent: 'center',
  
-  
+  zIndex:1003,
   width:'100%',
   height:'0%',
   

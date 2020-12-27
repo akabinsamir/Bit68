@@ -7,7 +7,7 @@ let screenWidth = Dimensions.get("window").width;
 let screenHeight = Platform.OS === 'android' ? Dimensions.get('screen').height - StatusBar.currentHeight :Dimensions.get('window').height;
 
 
-export default function Map({ navigation }) {
+export default function Map({ navigation,username }) {
   
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -73,7 +73,7 @@ export default function Map({ navigation }) {
   <TouchableOpacity onPress={() =>   
           console.log(location),
          // AsyncStorage.setItem("location", JSON.stringify(location)),
-          navigation.navigate('Home')
+          navigation.navigate('Home',{username:username})
      
     
   } style={{position:'absolute',width:'95%',height:'80%',top:'70%',left:'2%'}}>

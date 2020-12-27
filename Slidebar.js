@@ -14,14 +14,14 @@ export default Slidebar = props =>{
     return(
      
     
-        <ImageBackground source={require('./images/slidebar.png')} style={{width:undefined,height:screenHeight+200,}}>
-             <Image source={require('./images/tamweenlogo.png')} style={{width:'70%',resizeMode:'contain',bottom:'70%',left:'15%',position:'absolute'}}></Image>
-            <Image source={require('./images/arabicenglish.png')} style={{width:'70%',resizeMode:'contain',top:'20%',left:'15%'}}></Image>
-            <View style={{flex:1,top:'20%',borderRadius:200,width:'100%',height:'100%'}}>
+        <ImageBackground style={{width:undefined,height:screenHeight+200,backgroundColor:'#D95500'}}>
+             <Image source={require('./images/splashlogo.png')} style={{width:'70%',resizeMode:'contain',bottom:'70%',left:'15%',position:'absolute'}}></Image>
+           
+            <View style={{flex:1,top:'40%',borderRadius:200,width:'100%',height:'100%'}}>
              
                 <DrawerNavigatorItems {...props} 
-                inactiveTintColor='white'
-                activeTintColor='gray'
+                inactiveTintColor='black'
+                activeTintColor='white'
                 
                 labelStyle={{fontSize:20,fontWeight:'bold',fontFamily:'normal',left:'20%'}}
                 
